@@ -117,7 +117,7 @@ height: 60px;
 width: 60px;
 }
 /*-----------------------------------------------*/
-@media only screen and (min-width:600px) {
+@media only screen and (orientation: landscape) {
   nav { 
   position: relative;
   right: 0px;  
