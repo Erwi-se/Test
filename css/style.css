@@ -1,16 +1,17 @@
 :root {
+font-family: assistant;
 /* light mode */
---l1: #fff;
---l2: #eee;
---l3: #ddd;
---l4: #ccc;
---lt: #000;
+--l1: #eee;
+--l2: #ddd;
+--l3: #ccc;
+--l4: #bbb;
+--lt: #222;
 /* dark mode */
---d1: #000;
---d2: #111;
---d3: #222;
---d4: #333;
---dt: #fff;
+--d1: #222;
+--d2: #333;
+--d3: #444;
+--d4: #555;
+--dt: #eee;
 }
 
 :has(#toggle:checked) :is(label, main, .nav, h1, body) {
@@ -27,10 +28,12 @@
 margin: 0px;
 padding: 0px;
 box-sizing: border-box;
-font-family: assistant;
 
 body { background: var(--l1); }
 h1, main { color: var(--lt); }
+main {
+padding: 20px 20px 20px 20px;   
+}
 /*-----------------------------------------------*/
 /* làm mất hiệu ứng chớp xanh của thẻ <a> */
 a, a:visited { 
@@ -52,6 +55,7 @@ a:focus { outline: none !important; }
 /*-----------------------------------------------*/
 nav {
 background: var(--l2);
+border-right: 2px solid var(--l4);
 display: flex;
 flex-direction: column;
 align-items: flex-start;
@@ -62,6 +66,7 @@ top: 0px;
 right: -100%;
 z-index: 10;
 width: 80%;
+height: 100%;
 transition: 0.1s linear;
 }
 a, h1{
@@ -70,19 +75,31 @@ width: 100%;
 padding: 20px 30px;
 }
 #button:checked ~ nav { right: 0px; }
+hr { 
+  border: 0;
+  display:block;
+  width: 90%;               
+  background-color: var(--l4);
+  
+  height: 2px;
+  position: relative;
+  left: 5%;
+}
 
 .border {
-border: var(--l3) solid;
+border: var(--l4) solid;
 border-radius: 20px;
 height: 40px;
 width: 70px;
 
 display: flex;
 align-items: center;
-float: right;
+margin: auto auto 10% 10% ;
+float: bottom;
 }
 .toggle {
 background: var(--l3);
+box-shadow: 2px 2px 2px 2px var(--l4) inset;
 margin: 0px 10px;
 border-radius: 10px;
 height: 20px;
@@ -90,42 +107,45 @@ width: 50px;
 }
 .circle {
 background: var(--lt);
-border-radius: 10px;
+border-radius: 100%;
 height: 20px;
 width: 20px;
+transition: 0.1s ease-in;
 }
+:has(#toggle:checked) .circle { margin-left: auto; }
 
 picture {
 grid-area: img;
 width: 100%;
 background-size: cover;
-filter: brightness(30%);
+filter: brightness(60%);
 }
+:has(#toggle:checked) picture { filter: brightness(90%); }
 img { width: 100%; }
 /*-----------------------------------------------*/
 #button, #toggle { display: none;
 }
 .button {
 background: var(--l3);
-border-radius: 30px;
+border-radius: 100%;
 position: fixed;
 
 bottom: 20px;
 right: 20px;
 z-index: 20;
-height: 60px;
-width: 60px;
+aspect-ratio: 1 / 1;
+width: 15%;
 }
 /*-----------------------------------------------*/
 @media only screen and (orientation: landscape) {
   nav { 
   position: relative;
   right: 0px;  
-  width: 100%;
+  width: 300px;
   }
   body {
   display: grid;
-  grid-template-column: 600px 1fr;
+  grid-template-column: 1fr 1fr;
   grid-template-row: auto 1fr;
   grid-template-areas:
   "img img"
