@@ -13,29 +13,33 @@
 --dt: #fff;
 }
 
-:has(#toggle:checked) :is(label, main, .nav) {
+:has(#toggle:checked) :is(label, main, .nav, h1, body) {
 --l1: var(--d1);
 --l2: var(--d2);
 --l3: var(--d3);
 --l4: var(--d4);
 --lt: var(--dt);
 }
+:has(#toggle:checked) .light,
+:has(input[id="toggle"]:not(:checked)) .dark { display:none; }
 
 * {
 margin: 0px;
 padding: 0px;
 box-sizing: border-box;
-font-family: Arial;
-}
+font-family: assistant;
+
+body { background: var(--l1); }
+h1, main { color: var(--lt); }
 /*-----------------------------------------------*/
 /* làm mất hiệu ứng chớp xanh của thẻ <a> */
-a, a:visited {
+a, a:visited { 
 -webkit-tap-highlight-color: transparent; 
--webkit-touch-callout: none;
--webkit-user-select: none;
--khtml-user-select: none;
--moz-user-select: none;
--ms-user-select: none;
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
 user-select: none;
 color: var(--lt);
 text-decoration: none;
@@ -44,9 +48,7 @@ a:hover {
 color: #666;
 background: var(--l3);
 }
-a:focus {
-outline: none !important;
-}
+a:focus { outline: none !important; }
 /*-----------------------------------------------*/
 nav {
 background: var(--l2);
@@ -62,18 +64,13 @@ z-index: 10;
 width: 80%;
 transition: 0.1s linear;
 }
-nav a, h1{
+a, h1{
 height: auto;
 width: 100%;
 padding: 20px 30px;
 }
-#button:checked ~ nav {
-right: 0px;
-}
+#button:checked ~ nav { right: 0px; }
 
-#toggle {
-display: none;
-}
 .border {
 border: var(--l3) solid;
 border-radius: 20px;
@@ -104,17 +101,14 @@ width: 100%;
 background-size: cover;
 filter: brightness(30%);
 }
-img {
-width: 100%;
-}
+img { width: 100%; }
 /*-----------------------------------------------*/
-#button { display: none;
+#button, #toggle { display: none;
 }
 .button {
 background: var(--l3);
 border-radius: 30px;
 position: fixed;
-
 
 bottom: 20px;
 right: 20px;
@@ -124,9 +118,9 @@ width: 60px;
 }
 /*-----------------------------------------------*/
 @media only screen and (min-width:600px) {
-  nav {
+  nav { 
   position: relative;
-  right: 0px;
+  right: 0px;  
   width: 100%;
   }
   body {
@@ -137,8 +131,6 @@ width: 60px;
   "img img"
   "nav main";
   }
-  main {
-  grid-area: main;
-  }
+  main { grid-area: main; }  
   .button { display: none; }
 }
