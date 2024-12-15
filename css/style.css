@@ -1,0 +1,143 @@
+:root {
+/* light mode */
+--l1: #fff;
+--l2: #eee;
+--l3: #ddd;
+--l4: #ccc;
+--lt: #000;
+/* dark mode */
+--d1: #000;
+--d2: #111;
+--d3: #222;
+--d4: #333;
+--dt: #fff;
+}
+
+:has(#toggle:checked) :is(label, main, .nav) {
+--l1: var(--d1);
+--l2: var(--d2);
+--l3: var(--d3);
+--l4: var(--d4);
+--lt: var(--dt);
+}
+
+* {
+margin: 0px;
+padding: 0px;
+box-sizing: border-box; 
+}
+/*-----------------------------------------------*/
+/* làm mất hiệu ứng chớp xanh của thẻ <a> */
+a, a:visited { 
+-webkit-tap-highlight-color: transparent; 
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
+user-select: none;
+color: var(--lt);
+text-decoration: none;
+}
+a:hover {
+color: #666;
+background: var(--l3);
+}
+a:focus { 
+outline: none !important; 
+}
+/*-----------------------------------------------*/
+nav {
+background: var(--l2);
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+grid-area: nav;
+
+position: fixed;
+top: 0px;
+right: -100%;
+z-index: 10;
+width: 80%;
+transition: 0.1s linear;
+}
+nav a, h1{
+height: auto;
+width: 100%;
+padding: 20px 30px;
+}
+#button:checked ~ nav {
+right: 0px;
+}
+
+#toggle {
+display: none;
+}
+.border {
+border: var(--l3) solid;
+border-radius: 20px;
+height: 40px;
+width: 70px;
+
+display: flex;
+align-items: center;
+float: right;
+}
+.toggle {
+background: var(--l3);
+margin: 0px 10px;
+border-radius: 10px;
+height: 20px;
+width: 50px;
+}
+.circle {
+background: var(--lt);
+border-radius: 10px;
+height: 20px;
+width: 20px;
+}
+
+picture {
+grid-area: img;
+width: 100%;
+background-size: cover;
+filter: brightness(30%);
+}
+img {
+width: 100%;
+}
+/*-----------------------------------------------*/
+#button { display: none;
+}
+.button {
+background: var(--l3);
+border-radius: 30px;
+position: fixed;
+
+
+bottom: 20px;
+right: 20px;
+z-index: 20;
+height: 60px;
+width: 60px;
+}
+/*-----------------------------------------------*/
+@media only screen and (min-width:600px) {
+  nav { 
+  position: relative;
+  right: 0px;  
+  width: 100%;
+  }
+  body {
+  display: grid;
+  grid-template-column: 600px 1fr;
+  grid-template-row: auto 1fr;
+  grid-template-areas:
+  "img img"
+  "nav main";
+  }
+  main {
+  grid-area: main;
+  }
+  .button { display: none; }
+}
