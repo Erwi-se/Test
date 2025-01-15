@@ -7,11 +7,10 @@ function getCard() {
     const random = Math.floor(Math.random() * (22- i));
     result.push(arr[random]);
     arr[random] = arr[22 - i];
-    if (i == 4) {
-      for (let k = 0; k < 4; k++) {
-      document.getElementById(id[k]).src = result[k] + "_tarot.png";
-      }
-    }
+  }
+    
+  for (let i = 0; i < 4; i++) {
+    document.getElementById(id[i]).src = result[i] + "_tarot.png";
   }
   console.log(result)
 }
