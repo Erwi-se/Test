@@ -12,14 +12,19 @@
 <body>
   <h1>Tarot card</h1>
   <main class="tarot">
-      <img src="tarot_back.png" id="1" alt="1" onclick="getDes(0)">
-      <img src="tarot_back.png" id="2" alt="2" onclick="getDes(1)">
-      <img src="tarot_back.png" id="3" alt="3" onclick="getDes(2)">
-      <img src="tarot_back.png" id="4" alt="4" onclick="getDes(3)">
+      <img src="tarot_back.png" id="1" alt="1" onclick="getDes(this.src)">
+      <img src="tarot_back.png" id="2" alt="2" onclick="getDes(this.src)">
+      <img src="tarot_back.png" id="3" alt="3" onclick="getDes(this.src)">
+      <img src="tarot_back.png" id="4" alt="4" onclick="getDes(this.src)">
   </main>
-  <button onclick="getCard()">Lấy bài</button>
+  <button onclick="getCard(slider)">Lấy bài</button>
   
-  <aside id="des">
+  <aside>
+    <div id="des"></div>
+    <div>
+      <h1>Setting</h1>
+      <label>Số Bài:</label><span id="demo"></span><br>
+      <input type="range" min="1" max="6" id="cardRange">
   </aside>
   
 </body>
