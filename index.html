@@ -2,30 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,     initial-scale=1.0">
-  <title>Tarot card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarot Card</title>
   <link rel="icon" type="image/png" href="/img/favicon.png">
   <script src="stuff1.js"></script>
   <noscript>Trang web này cần bật JavaScript!</noscript>
   <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-  <h1>Tarot card</h1>
+  <h1>Tarot Card</h1>
   <main class="tarot">
-      <img src="tarot_back.png" id="1" alt="1" onclick="getDes(this.src)">
-      <img src="tarot_back.png" id="2" alt="2" onclick="getDes(this.src)">
-      <img src="tarot_back.png" id="3" alt="3" onclick="getDes(this.src)">
-      <img src="tarot_back.png" id="4" alt="4" onclick="getDes(this.src)">
+      <img src="tarot_back.png" id="1" alt="Tarot Card 1" onclick="getDes(this.src)">
   </main>
-  <button onclick="getCard(slider)">Lấy bài</button>
+  <button onclick="getCard()">Lấy bài</button>
   
   <aside>
-    <div id="des"></div>
+    <div id="description"></div>
     <div>
       <h1>Setting</h1>
-      <label>Số Bài:</label><span id="demo"></span><br>
+      <label for="cardRange">Số Bài:</label>
+      <span id="cardCount"></span><br>
       <input type="range" min="1" max="6" id="cardRange">
+    </div>
   </aside>
-  
 </body>
 </html>
