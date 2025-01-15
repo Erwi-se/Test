@@ -22,8 +22,3 @@ function getDes(url) {
     document.getElementById("description").innerHTML = "The Fool";
   }
 }
-
-// Add an event listener to update the card count display
-document.getElementById("cardRange").addEventListener("input", function() {
-  document.getElementById("cardCount").textContent = this.value;
-});
