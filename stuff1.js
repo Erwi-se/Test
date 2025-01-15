@@ -1,22 +1,12 @@
-addEventListener("DOMContentLoaded", function() {
-slider = document.getElementById("cardRange");
-output = document.getElementById("demo");
-output.innerHTML = slider.value;
-
-slider.oninput = function() {
-  output.innerHTML = this.value;
-}
-});
-
-function getCard(slider) {
-  let arr = [...Array(22).keys()];
+function getCard(cardCount) {
+  let array = [...Array(22).keys()];
   let result = [];
-  let id = [...Array(slider.value).keys()].map(i => i+1);
+  let id = [...Array(cardCount).keys()].map(i => i+1);
   console.log(id)
-  for (let i = 1; i <= slider.value; i++) {
+  for (let i = 1; i <= cardCount; i++) {
     const random = Math.floor(Math.random() * (22- i));
     result.push(arr[random]);
-    arr[random] = arr[22 - i];
+    array[random] = array[22 - i];
   }
     
   for (let i = 0; i < slider.value; i++) {
