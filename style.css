@@ -1,0 +1,46 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  background: url('window.jpg');;
+}
+.tarot {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+main img {
+  position: relative;
+  width: 20%;
+  top: 0px;
+  transition: 0.05s ease-in;
+}
+main img:hover {
+  top: -10px;
+}
+
+button {
+  width: 90px;
+  height: 40px;
+  display: block;
+  margin: 20px auto;
+  transition: 0.05s ease-in;
+  background: #7C7F7E;
+}
+button:focus {
+  translate: 0 4px;
+  background: #5A5D5C;
+}
+
+h1 {
+  text-align: center;
+  margin: 20px auto;
+}
+aside {
+  background: #fff;
+  outline: 1px solid #7C7F7E;
+  padding: 30px;
+}
