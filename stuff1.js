@@ -21,7 +21,7 @@ const tarotDescriptions = {
   18: "The Moon",
   19: "The Sun",
   20: "Judgement",
-  21: "The World" 
+  21: "The World"
 };
 
 // Function to generate and display random tarot cards
@@ -129,11 +129,12 @@ function createDeleteButton(cardElement) {
     cardElement.classList.add('deleting');
     console.log(`Added deleting class to cardElement with id: ${cardElement.id}`);
 
-    // Remove the card element after the animation completes
-    cardElement.addEventListener('animationend', function () {
+    // Ensure the event listener is added for the animationend event
+    cardElement.addEventListener('animationend', function handleAnimationEnd() {
       console.log(`Animation ended for cardElement with id: ${cardElement.id}`);
       cardElement.remove();
-    }, { once: true });
+      cardElement.removeEventListener('animationend', handleAnimationEnd); // Clean up the event listener
+    });
   };
 
   return deleteButton;
