@@ -7,29 +7,28 @@
   <link rel="icon" type="image/png" href="tarot_back.png">
   <script src="stuff1.js" defer></script>
   <noscript>Trang web này cần bật JavaScript!</noscript>
-  <link rel="stylesheet" href="style.css"> 
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header> 
-    <h1>Tarot Card</h1> 
+  <header>
+    <h1>Tarot Card</h1>
   </header>
-   
+
   <main class="container"></main>
-  
+
   <aside>
     <div id="description"></div>
     <div>
       <h1>Setting</h1>
       <button onclick="getCard()">Lấy bài</button> <br>
       <label for="cardRange">Số Bài:</label>
-      <span id="cardCount"></span><br>
-      <input type="range" min="1" max="6" id="cardRange">
+      <span id="cardCount">4</span><br>
+      <input type="range" min="1" max="6" value="4" id="cardRange">
     </div>
   </aside>
-  
+
   <footer>
     Paccha là người vẽ
   </footer>
-  
 </body>
 </html>
