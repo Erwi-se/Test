@@ -1,177 +1,180 @@
-const tarotDescriptions = {
-  0: "The Fool",
-  1: "The Magician",
-  2: "The High Priestess",
-  3: "The Empress",
-  4: "The Emperor",
-  5: "The Hierophant",
-  6: "The Lovers",
-  7: "The Chariot",
-  8: "Strength",
-  9: "The Hermit",
-  10: "Wheel of Fortune",
-  11: "Justice",
-  12: "The Hanged Man",
-  13: "Death",
-  14: "Temperance",
-  15: "The Devil",
-  16: "The Tower",
-  17: "The Star",
-  18: "The Moon",
-  19: "The Sun", 
-  20: "Judgement",
-  21: "The World"
-}; 
+/* =================
+   GLOBAL STYLES
+   ================= */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: 0.1px solid green;
+}
 
-function getCard() {
-  const slider = document.getElementById("cardRange");
-  const cardCount = slider.value;
+/* =================
+   LAYOUT
+   ================= */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 100%;
+  aspect-ratio: 5 / 4; 
+}
 
-  const array = [...Array(22).keys()];
-  const result = [];
+.row-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  gap: 5px 1%;
+  perspective: 1000px; /* Add perspective to the container */
+}
 
-  const mainElement = document.querySelector('main.container');
-  if (mainElement) {
-    mainElement.innerHTML = '';
+/* =================
+   CARD STYLES
+   ================= */
+.card {
+  width: 20%;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  position: relative;
+  animation: getCard 0.5s ease-in;
+}
+
+.card img {
+  width: 100%;
+  backface-visibility: hidden;
+}
+
+/* Card Face Styles */
+.card .front {
+  transform: rotateY(180deg);
+  backface-visibility: hidden; /* Ensure proper rendering */
+}
+
+.card .back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden; /* Ensure proper rendering */
+}
+
+/* Delete Button Styles */
+.card.flipped .delete-button {
+  position: absolute;
+  top: 1%;
+  right: 2%;
+  width: 8%;
+  height: 5%;
+  display: block;
+  cursor: pointer;
+  z-index: 2; /* Ensure the button is on top */
+}
+
+.card .delete-button {
+  display: none; /* Hide the delete button */
+}
+
+/* Draggable Zone Styles */
+.card.flipped .draggable-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 7%;
+  display: block;
+  cursor: grab;
+  z-index: 1; /* Ensure the draggable zone is on top */
+}
+
+.card .draggable-zone {
+  display: none; /* Hide the draggable zone */
+}
+/* =================
+   CARD ANIMATIONS
+   ================= */
+@keyframes getCard {
+  from {
+    opacity: 0;
+    transform: translateY(-25%); /* Start above the original position */
   }
-
-  for (let i = 1; i <= cardCount; i++) {
-    const random = Math.floor(Math.random() * (22 - i));
-    result.push(array[random]);
-    array[random] = array[22 - i];
-  }
-
-  const rowSize = cardCount % 2 === 0 ? 4 : 3;
-
-  createCardElements(mainElement, rowSize, cardCount, result);
-}
-
-function createCardElements(mainElement, rowSize, cardCount, result) {
-  let rowContainer = null;
-
-  for (let i = 0; i < cardCount; i++) {
-    if (i % rowSize === 0) {
-      rowContainer = document.createElement('div');
-      rowContainer.classList.add('row-container');
-      mainElement.appendChild(rowContainer);
-    }
-
-    const cardElement = createCardElement(i, result[i]);
-    rowContainer.appendChild(cardElement);
-  }
-}
-
-function createCardElement(index, cardValue) {
-  const cardElement = document.createElement('div');
-  cardElement.classList.add('card');
-  cardElement.id = `card-${index + 1}`;
-  cardElement.style.animationDelay = `${0.5 - (1 / (index + 2))}s`;
-  cardElement.onclick = function () {
-    if (!this.classList.contains('flipped')) {
-      this.classList.toggle('flipped');
-    }
-    getDescription(cardValue);
-  };
-
-  const frontFace = document.createElement('div');
-  frontFace.classList.add('front');
-  const frontImg = document.createElement('img');
-  frontImg.src = "img/" + cardValue + "_tarot.png";
-  frontImg.alt = `Tarot Card ${index + 1}`;
-  frontFace.appendChild(frontImg);
-
-  const deleteButton = createDeleteButton(cardElement);
-  frontFace.appendChild(deleteButton);
-
-  const draggableZone = createDraggableZone(cardElement);
-  frontFace.appendChild(draggableZone);
-
-  const backFace = document.createElement('img');
-  backFace.src = "img/tarot_back.png";
-  backFace.alt = `Unknown`;
-  backFace.classList.add('back');
-
-  cardElement.appendChild(frontFace);
-  cardElement.appendChild(backFace);
-
-  return cardElement;
-}
-
-function createDeleteButton(cardElement) {
-  const deleteButton = document.createElement('div');
-  deleteButton.classList.add('delete-button');
-  deleteButton.onclick = function (event) {
-    event.stopPropagation();
-
-    cardElement.classList.add('deleting');
-
-    cardElement.addEventListener('animationend', function handleAnimationEnd() {
-      cardElement.remove();
-      cardElement.removeEventListener('animationend', handleAnimationEnd);
-    });
-  };
-
-  return deleteButton;
-}
-
-function createDraggableZone(cardElement) {
-  const draggableZone = document.createElement('div');
-  draggableZone.classList.add('draggable-zone');
-  draggableZone.draggable = true;
-
-  draggableZone.ondragstart = function(event) {
-    event.dataTransfer.setData("text/plain", cardElement.id);
-  };
-
-  draggableZone.addEventListener('touchstart', touchstartHandler, {passive: true});
-  draggableZone.addEventListener('touchmove', touchmoveHandler, {passive: true});
-  draggableZone.addEventListener('touchend', touchendHandler, {passive: true});
-
-  return draggableZone;
-}
-
-let touchstartX = 0;
-let touchstartY = 0;
-
-function touchstartHandler(event) {
-  touchstartX = event.touches[0].clientX;
-  touchstartY = event.touches[0].clientY;
-}
-
-function touchmoveHandler(event) {
-  const touch = event.touches[0];
-  const touchendX = touch.clientX;
-  const touchendY = touch.clientY;
-
-  const dx = touchendX - touchstartX;
-  const dy = touchendY - touchstartY;
-
-  const cardElement = event.target.closest('.card');
-  if (cardElement) {
-    cardElement.style.transform = `translate(${dx}px, ${dy}px)`;
+  to {
+    opacity: 1;
+    transform: translateY(0); /* End at the original position */
   }
 }
 
-function touchendHandler(event) {
-  const cardElement = event.target.closest('.card');
-  if (cardElement) {
-    cardElement.style.transform = '';
+@keyframes deleteCard {
+  from {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0) rotateY(0deg);
   }
 }
 
-function getDescription(cardIndex) {
-  const description = tarotDescriptions[cardIndex];
-  document.getElementById("description").innerHTML = description;
+@keyframes deleteCardFlipped {
+  from {
+    opacity: 1;
+    transform: scale(1) rotateY(180deg);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0) rotateY(180deg);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const slider = document.getElementById("cardRange");
+/* =================
+   CARD STATES
+   ================= */
+.card.flipped {
+  transform: rotateY(180deg); /* Flip the card */
+}
 
-  if (slider) {
-    slider.addEventListener("input", function () {
-      document.getElementById("cardCount").textContent = this.value;
-    });
-  } else {
-    console.error("Element with ID 'cardRange' not found.");
+.card.deleting {
+  animation: deleteCard 0.5s forwards;
+}
+
+.card.deleting .front {
+  backface-visibility: visible;
+}
+
+.card.flipped.deleting {
+  animation: deleteCardFlipped 0.5s forwards;
+}
+
+.card.flipped.deleting .back {
+  display: none; /* Hide the back face */
+}
+
+/* =================
+   RESPONSIVE DESIGN
+   ================= */
+@media only screen and (min-width: 600px) {
+  body {
+    display: grid;
+    grid:
+    "header header" 1fr
+    "main aside" auto
+    "footer footer" 1fr
+    / 2fr 1fr;
   }
-});
+  header {
+    grid-area: header;
+  }
+  main {
+    grid-area: main;
+  }
+  aside {
+    grid-area: aside;
+  }
+  footer {
+    grid-area: footer;
+  }
+}
