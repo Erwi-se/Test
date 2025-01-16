@@ -1,4 +1,7 @@
-// Mapping of card indices to descriptions
+// =================
+// DATA STRUCTURES
+// =================
+
 const tarotDescriptions = {
   0: "The Fool",
   1: "The Magician",
@@ -24,7 +27,10 @@ const tarotDescriptions = {
   21: "The World"
 }; 
 
-// Function to generate and display random tarot cards
+// =================
+// CORE FUNCTIONS
+// =================
+
 function getCard() {
   console.log("getCard called");
   const slider = document.getElementById("cardRange");
@@ -58,7 +64,10 @@ function getCard() {
   createCardElements(mainElement, rowSize, cardCount, result);
 }
 
-// Function to create and append new card elements
+// =================
+// UI CONSTRUCTION
+// =================
+
 function createCardElements(mainElement, rowSize, cardCount, result) {
   let rowContainer = null;
   console.log("Creating card elements");
@@ -78,7 +87,6 @@ function createCardElements(mainElement, rowSize, cardCount, result) {
   }
 }
 
-// Function to create a single card element
 function createCardElement(index, cardValue) {
   const cardElement = document.createElement('div');
   cardElement.classList.add('card');
@@ -117,7 +125,6 @@ function createCardElement(index, cardValue) {
   return cardElement;
 }
 
-// Function to create a delete button
 function createDeleteButton(cardElement) {
   const deleteButton = document.createElement('div');
   deleteButton.classList.add('delete-button');
@@ -140,14 +147,20 @@ function createDeleteButton(cardElement) {
   return deleteButton;
 }
 
-// Function to display the description of a tarot card
+// =================
+// CARD INTERACTIONS
+// =================
+
 function getDescription(cardIndex) {
   const description = tarotDescriptions[cardIndex];
   document.getElementById("description").innerHTML = description;
   console.log(`Description displayed for cardIndex: ${cardIndex}`);
 }
 
-// Add an event listener to update the card count display
+// =================
+// EVENT LISTENERS
+// =================
+
 document.addEventListener("DOMContentLoaded", function () {
   const slider = document.getElementById("cardRange");
 
