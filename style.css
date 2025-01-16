@@ -72,11 +72,27 @@
   height: 5%;
   display: block;
   cursor: pointer;
-  z-index: 1; /* Ensure the button is on top */
+  z-index: 2; /* Ensure the button is on top */
 }
 
 .card .delete-button {
   display: none; /* Hide the delete button */
+}
+
+/* Draggable Zone Styles */
+.card.flipped .draggable-zone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 7%;
+  display: block;
+  cursor: grab;
+  z-index: 1; /* Ensure the draggable zone is on top */
+}
+
+.card .draggable-zone {
+  display: none; /* Hide the draggable zone */
 }
 
 /* =================
