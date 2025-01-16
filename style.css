@@ -67,24 +67,39 @@
   display: none; /* Hide the delete button */
 }
 
-/* Add a full-width invisible element after every 3 cards to break the line */
-.container .card:nth-child(3n)::after {
-  content: "";
-  flex-basis: 100%;
-  width: 0;
-  height: 0;
-}
-
 /* Define the getCard animation */
 @keyframes getCard {
   from {
     opacity: 0;
-    transform: translateY(-10%); /* Start above the original position */
+    transform: translateY(-25%); /* Start above the original position */
   }
   to {
     opacity: 1;
     transform: translateY(0); /* End at the original position */
   }
+}
+
+@keyframes deleteCard {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+  }
+}
+
+.card.deleting {
+  animation: deleteCard 0.5s forwards;
+}
+
+.card.flipped.deleting {
+  transform: rotateY(180deg) scale(0) !important; /* Ensure the card stays flipped */
+}
+
+.card.flipped.deleting .back {
+  display: none; /* Hide the back face */
 }
 
 @media only screen and (min-width: 600px) {
