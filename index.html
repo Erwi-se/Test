@@ -4,16 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tarot Card</title>
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <script src="stuff1.js"></script>
+  <link rel="icon" type="image/png" href="tarot_back.png">
+  <script src="stuff1.js" defer></script> <!-- Use defer to ensure script runs after DOM loads -->
   <noscript>Trang web này cần bật JavaScript!</noscript>
   <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
   <h1>Tarot Card</h1>
-  <main class="tarot">
-      <img src="tarot_back.png" id="1" alt="Tarot Card 1" onclick="getDes(this.src)">
-  </main>
+  <main class="container"></main>
   <button onclick="getCard()">Lấy bài</button>
   
   <aside>
