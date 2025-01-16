@@ -44,7 +44,3 @@
 .card.flipped {
   transform: rotateY(180deg); /* Flip the card */
 }
-
-.container .card:nth-child(3n+3) {
-  wrap-after: flex;
-}
