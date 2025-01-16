@@ -24,9 +24,12 @@ const tarotDescriptions = {
   21: "The World"
 };
 
+// Function to generate and display random tarot cards
 function getCard() {
   const slider = document.getElementById("cardRange");
   const cardCount = slider.value;
+
+  // Create an array with indices 0 to 21
   let array = [...Array(22).keys()];
   let result = [];
   let id = [...Array(cardCount).keys()].map(i => i + 1);
@@ -42,36 +45,65 @@ function getCard() {
     array[random] = array[22 - i];
   }
 
+  // Determine the row size
+  const rowSize = cardCount % 2 === 0 ? 4 : 3;
+
   // Create and append new card elements
+  let rowContainer = null;
   for (let i = 0; i < cardCount; i++) {
+    // Create a new row container every 'rowSize' cards
+    if (i % rowSize === 0) {
+      rowContainer = document.createElement('div');
+      rowContainer.classList.add('row-container');
+      mainElement.appendChild(rowContainer);
+    }
+
     let cardElement = document.createElement('div');
     cardElement.classList.add('card');
     cardElement.id = id[i];
+    cardElement.style.animationDelay = `${i * 0.2}s`; // Add animation delay for chain effect
     cardElement.onclick = function() {
       if (!this.classList.contains('flipped')) {
         this.classList.toggle('flipped');
       }
       getDes(result[i]);
     };
+
+    // Create front face div and append img to it
+    let frontFace = document.createElement('div');
+    frontFace.classList.add('front');
+    let frontImg = document.createElement('img');
+    frontImg.src = result[i] + "_tarot.png";
+    frontImg.alt = `Tarot Card ${i + 1}`;
+    frontFace.appendChild(frontImg);
     
-    let frontFace = document.createElement('img');
-    frontFace.src = result[i] + "_tarot.png";
-    frontFace.alt = `Tarot Card ${i + 1}`;
-    frontFace.classList.add('front'); 
+    // Create delete button for front face
+    let deleteButton = document.createElement('div');
+    deleteButton.classList.add('delete-button');    
+    deleteButton.onclick = function(event) {
+      event.stopPropagation(); // Prevent card flip
+      cardElement.remove(); // Remove the card element
+    };
+    frontFace.appendChild(deleteButton);
     
+    // Create back face of the card with a generic tarot back image
     let backFace = document.createElement('img');
     backFace.src = "tarot_back.png";
     backFace.alt = `Unknown`;
-    backFace.classList.add('back');
+    backFace.classList.add('back');   
     
+    // Append both faces to the card element
     cardElement.appendChild(frontFace); 
     cardElement.appendChild(backFace);
-    mainElement.appendChild(cardElement);
+
+    // Append the card element to the current row container
+    rowContainer.appendChild(cardElement);
   }
 
   console.log(result);
 }
 
+// Function to display the description of a tarot card
 function getDes(cardIndex) {
   const description = tarotDescriptions[cardIndex];
   document.getElementById("description").innerHTML = description;
@@ -81,7 +113,7 @@ function getDes(cardIndex) {
 document.addEventListener("DOMContentLoaded", function() {
   const slider = document.getElementById("cardRange");
 
-  if (slider) {  // Check if the element exists
+  if (slider) {
     slider.addEventListener("input", function() {
       document.getElementById("cardCount").textContent = this.value;
     });
