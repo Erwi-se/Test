@@ -12,6 +12,7 @@
 
 .container {
   width: 100%;
+  aspect-ratio: 5 / 4;
 }
 
 .row-container {
@@ -83,5 +84,28 @@
   to {
     opacity: 1;
     transform: translateY(0); /* End at the original position */
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  body {
+  display: grid;
+  grid:
+  "header header" 1fr
+  "main aside" auto
+  "footer footer" 1fr
+  / 2fr 1fr;
+  }
+  header {
+    grid-area: header;
+  }
+  main {
+    grid-area: main;
+  }
+  aside {
+    grid-area: aside;
+  }
+  footer {
+    grid-area: footer;
   }
 }
