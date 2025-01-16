@@ -23,7 +23,7 @@ const tarotDescriptions = {
   20: "Judgement",
   21: "The World"
 };
-
+ 
 // Function to generate and display random tarot cards
 function getCard() {
   const slider = document.getElementById("cardRange");
