@@ -23,7 +23,7 @@ const tarotDescriptions = {
   20: "Judgement",
   21: "The World"
 };
- 
+
 // Function to generate and display random tarot cards
 function getCard() {
   const slider = document.getElementById("cardRange");
@@ -73,7 +73,7 @@ function getCard() {
     let frontFace = document.createElement('div');
     frontFace.classList.add('front');
     let frontImg = document.createElement('img');
-    frontImg.src = result[i] + "_tarot.png";
+    frontImg.src = "img/" + result[i] + "_tarot.png";
     frontImg.alt = `Tarot Card ${i + 1}`;
     frontFace.appendChild(frontImg);
     
@@ -88,7 +88,7 @@ function getCard() {
     
     // Create back face of the card with a generic tarot back image
     let backFace = document.createElement('img');
-    backFace.src = "tarot_back.png";
+    backFace.src = "img/tarot_back.png";
     backFace.alt = `Unknown`;
     backFace.classList.add('back');   
     
