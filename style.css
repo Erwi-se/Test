@@ -1,3 +1,6 @@
+/* =================
+   GLOBAL STYLES
+   ================= */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -10,6 +13,9 @@
   outline: 0.1px solid green;
 }
 
+/* =================
+   LAYOUT
+   ================= */
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -27,6 +33,9 @@
   perspective: 1000px; /* Add perspective to the container */
 }
 
+/* =================
+   CARD STYLES
+   ================= */
 .card {
   width: 20%;
   cursor: pointer;
@@ -41,6 +50,7 @@
   backface-visibility: hidden;
 }
 
+/* Card Face Styles */
 .card .front {
   transform: rotateY(180deg);
   backface-visibility: hidden; /* Ensure proper rendering */
@@ -53,10 +63,7 @@
   backface-visibility: hidden; /* Ensure proper rendering */
 }
 
-.card.flipped {
-  transform: rotateY(180deg); /* Flip the card */
-}
-
+/* Delete Button Styles */
 .card.flipped .delete-button {
   position: absolute;
   top: 1%;
@@ -72,7 +79,9 @@
   display: none; /* Hide the delete button */
 }
 
-/* Define the getCard animation */
+/* =================
+   CARD ANIMATIONS
+   ================= */
 @keyframes getCard {
   from {
     opacity: 0;
@@ -84,7 +93,6 @@
   }
 }
 
-/* Update the deleteCard animation to work with flipped state */
 @keyframes deleteCard {
   from {
     opacity: 1;
@@ -96,7 +104,6 @@
   }
 }
 
-/* Update the flipped version of the deleteCard animation */
 @keyframes deleteCardFlipped {
   from {
     opacity: 1;
@@ -108,12 +115,17 @@
   }
 }
 
-/* Update the deleting classes */
+/* =================
+   CARD STATES
+   ================= */
+.card.flipped {
+  transform: rotateY(180deg); /* Flip the card */
+}
+
 .card.deleting {
   animation: deleteCard 0.5s forwards;
 }
 
-/* Ensure card contents remain visible during animation */
 .card.deleting .front {
   backface-visibility: visible;
 }
@@ -126,6 +138,9 @@
   display: none; /* Hide the back face */
 }
 
+/* =================
+   RESPONSIVE DESIGN
+   ================= */
 @media only screen and (min-width: 600px) {
   body {
     display: grid;
