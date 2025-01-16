@@ -3,7 +3,7 @@
   justify-content: space-evenly;
   width: 100%;
   perspective: 1000px; /* Add perspective to the container */
-}
+} 
 
 .card {
   width: 20%;
