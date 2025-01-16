@@ -6,7 +6,7 @@ const tarotDescriptions = {
   4: "The Emperor",
   5: "The Hierophant",
   6: "The Lovers",
-  7: "The Chariot",
+  7: "The Chariot", 
   8: "Strength",
   9: "The Hermit",
   10: "Wheel of Fortune",
