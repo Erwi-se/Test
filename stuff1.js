@@ -82,7 +82,14 @@ function getCard() {
     deleteButton.classList.add('delete-button');    
     deleteButton.onclick = function(event) {
       event.stopPropagation(); // Prevent card flip
-      cardElement.remove(); // Remove the card element
+  
+      // Add the deleting class to the card element
+      cardElement.classList.add('deleting');
+  
+      // Remove the card element after the animation completes
+      cardElement.addEventListener('animationend', function() {
+      cardElement.remove();
+      });
     };
     frontFace.appendChild(deleteButton);
     
