@@ -31,14 +31,14 @@
   backface-visibility: hidden;
 }
 
+.card .front {
+  transform: rotateY(180deg);
+} 
+
 .card .back {
   position: absolute;
   top: 0;
   left: 0;
-}
-
-.card .front {
-  transform: rotateY(180deg);
 }
 
 .card.flipped {
