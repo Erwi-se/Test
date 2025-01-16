@@ -11,16 +11,19 @@
 }
 
 .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
   aspect-ratio: 5 / 4;
 }
 
 .row-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap;
   justify-content: center;
   width: 100%;
-  gap: 5px 1%;    
+  gap: 5px 1%;
   perspective: 1000px; /* Add perspective to the container */
 }
 
@@ -40,12 +43,14 @@
 
 .card .front {
   transform: rotateY(180deg);
-} 
+  backface-visibility: hidden; /* Ensure proper rendering */
+}
 
 .card .back {
   position: absolute;
   top: 0;
   left: 0;
+  backface-visibility: hidden; /* Ensure proper rendering */
 }
 
 .card.flipped {
@@ -104,12 +109,12 @@
 
 @media only screen and (min-width: 600px) {
   body {
-  display: grid;
-  grid:
-  "header header" 1fr
-  "main aside" auto
-  "footer footer" 1fr
-  / 2fr 1fr;
+    display: grid;
+    grid:
+    "header header" 1fr
+    "main aside" auto
+    "footer footer" 1fr
+    / 2fr 1fr;
   }
   header {
     grid-area: header;
