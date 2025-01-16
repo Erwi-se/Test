@@ -22,7 +22,7 @@ const tarotDescriptions = {
   16: "The Tower",
   17: "The Star",
   18: "The Moon",
-  19: "The Sun",
+  19: "The Sun", 
   20: "Judgement",
   21: "The World"
 }; 
