@@ -84,23 +84,42 @@
   }
 }
 
+/* Update the deleteCard animation to work with flipped state */
 @keyframes deleteCard {
   from {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) rotateY(0deg);
   }
   to {
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0) rotateY(0deg);
   }
 }
 
+/* Update the flipped version of the deleteCard animation */
+@keyframes deleteCardFlipped {
+  from {
+    opacity: 1;
+    transform: scale(1) rotateY(180deg);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0) rotateY(180deg);
+  }
+}
+
+/* Update the deleting classes */
 .card.deleting {
   animation: deleteCard 0.5s forwards;
 }
 
+/* Ensure card contents remain visible during animation */
+.card.deleting .front {
+  backface-visibility: visible;
+}
+
 .card.flipped.deleting {
-  transform: rotateY(180deg) scale(0) !important; /* Ensure the card stays flipped */
+  animation: deleteCardFlipped 0.5s forwards;
 }
 
 .card.flipped.deleting .back {
