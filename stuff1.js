@@ -22,7 +22,7 @@ const tarotDescriptions = {
   19: "The Sun",
   20: "Judgement",
   21: "The World"
-};
+}; 
 
 function getCard() {
   const slider = document.getElementById("cardRange");
