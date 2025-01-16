@@ -21,7 +21,7 @@ const tarotDescriptions = {
   18: "The Moon",
   19: "The Sun",
   20: "Judgement",
-  21: "The World"
+  21: "The World" 
 };
 
 // Function to generate and display random tarot cards
