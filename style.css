@@ -28,17 +28,17 @@
 
 .card img {
   width: 100%;
-  backface-visibility: hidden; /* Hide the back face of the card */
+  backface-visibility: hidden;
 }
 
-.card .front {
+.card .back {
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.card .back {
-  transform: rotateY(180deg); /* Rotate the back face */
+.card .front {
+  transform: rotateY(180deg);
 }
 
 .card.flipped {
