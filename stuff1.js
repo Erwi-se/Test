@@ -61,7 +61,7 @@ function getCard() {
     let cardElement = document.createElement('div');
     cardElement.classList.add('card');
     cardElement.id = id[i];
-    cardElement.style.animationDelay = `${i * 0.2}s`; // Add animation delay for chain effect
+    cardElement.style.animationDelay = `${0.5 - (1 / (i+2) ) }s`; // Add animation delay for chain effect
     cardElement.onclick = function() {
       if (!this.classList.contains('flipped')) {
         this.classList.toggle('flipped');
