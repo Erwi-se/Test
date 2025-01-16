@@ -90,12 +90,10 @@ function createCardElements(mainElement, rowSize, cardCount, result) {
 function createCardElement(index, cardValue) {
   const cardElement = document.createElement('div');
   cardElement.classList.add('card');
-  cardElement.id = `card-${index + 1}`; // Use a unique ID for each card
-  cardElement.style.animationDelay = `${0.5 - (1 / (index + 2))}s`; // Add animation delay for chain effect
+  cardElement.id = `card-${index + 1}`;
+  cardElement.style.animationDelay = `${0.5 - (1 / (index + 2))}s`;
   cardElement.onclick = function () {
-    if (!this.classList.contains('flipped')) {
-      this.classList.toggle('flipped');
-    }
+    this.classList.toggle('flipped');
     getDescription(cardValue);
   };
 
@@ -117,9 +115,22 @@ function createCardElement(index, cardValue) {
   backFace.alt = `Unknown`;
   backFace.classList.add('back');
 
-  // Append both faces to the card element
+  // Create draggable zone
+  const draggableZone = document.createElement('div');
+  draggableZone.classList.add('draggable-zone');
+  draggableZone.draggable = true;
+  draggableZone.addEventListener('dragstart', handleDragStart);
+  draggableZone.addEventListener('dragend', handleDragEnd);
+
+  // Touch events for mobile devices
+  draggableZone.addEventListener('touchstart', handleTouchStart);
+  draggableZone.addEventListener('touchmove', handleTouchMove);
+  draggableZone.addEventListener('touchend', handleTouchEnd);
+
+  // Append both faces and draggable zone to the card element
   cardElement.appendChild(frontFace);
   cardElement.appendChild(backFace);
+  cardElement.appendChild(draggableZone);
 
   console.log(`Created card element with id: ${cardElement.id}`);
   return cardElement;
@@ -155,6 +166,62 @@ function getDescription(cardIndex) {
   const description = tarotDescriptions[cardIndex];
   document.getElementById("description").innerHTML = description;
   console.log(`Description displayed for cardIndex: ${cardIndex}`);
+}
+
+// =================
+// DRAG AND DROP
+// =================
+
+function handleDragStart(event) {
+  event.dataTransfer.setData('text/plain', event.target.parentElement.id);
+  event.target.style.cursor = 'grabbing';
+  event.target.parentElement.classList.add('dragging');
+  console.log(`Drag started for cardElement with id: ${event.target.parentElement.id}`);
+}
+
+function handleDragEnd(event) {
+  event.target.style.cursor = 'grab';
+  const cardElement = event.target.parentElement;
+  cardElement.classList.remove('dragging');
+  cardElement.style.transform = '';
+  console.log(`Drag ended for cardElement with id: ${cardElement.id}`);
+}
+
+// =================
+// TOUCH EVENTS FOR MOBILE
+// =================
+
+let touchStartX = 0;
+let touchStartY = 0;
+let currentCardElement = null;
+
+function handleTouchStart(event) {
+  const touch = event.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+  currentCardElement = event.target.parentElement;
+  currentCardElement.classList.add('dragging');
+  console.log(`Touch started for cardElement with id: ${currentCardElement.id}`);
+}
+
+function handleTouchMove(event) {
+  if (!currentCardElement) return;
+
+  const touch = event.touches[0];
+  const touchMoveX = touch.clientX - touchStartX;
+  const touchMoveY = touch.clientY - touchStartY;
+
+  currentCardElement.style.transform = `translate(${touchMoveX}px, ${touchMoveY}px)`;
+  event.preventDefault(); // Prevent scrolling while dragging
+}
+
+function handleTouchEnd(event) {
+  if (!currentCardElement) return;
+
+  currentCardElement.style.transform = '';
+  currentCardElement.classList.remove('dragging');
+  currentCardElement = null;
+  console.log(`Touch ended for cardElement`);
 }
 
 // =================
