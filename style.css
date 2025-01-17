@@ -73,12 +73,25 @@
 /* =================
    CARD STATES
    ================= */
-.card.flipped {
-  transform: rotateY(180deg);
+.card[data-state="initial"] {
+  opacity: 0;
 }
 
-.card.flipped:hover {
-  transform: rotateY(180deg) translateY(-5%);
+.card[data-state="drawing"] {
+  animation: getCard 0.5s ease-in;
+}
+
+.card[data-state="flipping"],
+.card[data-state="flipped"] {
+  transition: transform 0.6s;
+}
+
+.card[data-state="selected"] {
+  box-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+.card[data-state="dragging"] {
+  cursor: grabbing;
 }
 
 /* =================
@@ -87,7 +100,8 @@
 /* All UI need to function only when card is flipped state */
 
 /* Delete Button */
-.card.flipped .delete-button {
+.card[data-state="flipped"] .delete-button,
+.card[data-state="selected"] .delete-button {
   position: absolute;
   top: 1.5%;
   right: 2%;
@@ -99,7 +113,8 @@
 }
 
 /* Draggable Zone Styles */
-.card.flipped .draggable-zone {
+.card[data-state="flipped"] .draggable-zone,
+.card[data-state="selected"] .draggable-zone { 
   position: absolute;
   top: 0;
   left: 0;
@@ -114,19 +129,16 @@
 /* =================
    CARD UI STATES
    ================= */
-/* Hide the delete button if card is not in flipped state */
-.card .delete-button {
-  display: none; 
+/* Delete button is only visible in flipped or selected states */
+.card[data-state="flipped"] .delete-button,
+.card[data-state="selected"] .delete-button {
+  display: block;
 }
 
-/* Highlight button on hover */ 
-.card.flipped .delete-button:hover {
-  background: #fff9;
-} 
-
-/* Hide the draggable zone button if card is not in flipped state */ 
-.card .draggable-zone {
-  display: none;
+/* Draggable zone is only active in flipped or selected states */
+.card[data-state="flipped"] .draggable-zone,
+.card[data-state="selected"] .draggable-zone {
+  display: block;
 }
 
 /* =================
