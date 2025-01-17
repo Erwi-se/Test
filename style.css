@@ -31,7 +31,7 @@
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
-  gap: 5px 1%;
+  gap: 2%;
   perspective: 1000px; /* Add perspective to the container */
 }
 
@@ -47,6 +47,7 @@
   transition: transform 0.6s;
   position: relative;
   animation: getCard 0.5s ease-in;
+  opacity: 0;
 }
 
 /* Card Face And Card Behind Styles */
@@ -58,15 +59,13 @@
 /* Card Face Styles */
 .card .front {
   transform: rotateY(180deg);
-  backface-visibility: hidden; /* Ensure proper rendering */
 }
 
 /* Card Behind Styles */ 
 .card .back {
   position: absolute;
   top: 0;
-  left: 0;
-  backface-visibility: hidden; /* Ensure proper rendering */
+  left: 0;  
 }
 
 /* =================
@@ -74,6 +73,10 @@
    ================= */
 .card.flipped {
   transform: rotateY(180deg);
+}
+
+.card.flipped:hover {
+  transform: rotateY(180deg) translateY(-5%);
 }
 
 /* =================
@@ -143,11 +146,11 @@
 @keyframes deleteCard {
   from {
     opacity: 1;
-    transform: scale(1);
+    transform: rotateY(180deg) scale(1);
   }
   to {
     opacity: 0;
-    transform: scale(0);
+    transform: rotateY(180deg) scale(0);
   }
 }
 
