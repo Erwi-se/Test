@@ -1,3 +1,4 @@
+// Tarot card descriptions
 const tarotDescriptions = {
   0: "The Fool",
   1: "The Magician",
@@ -23,6 +24,7 @@ const tarotDescriptions = {
   21: "The World"
 }; 
 
+// Main function to generate random tarot cards
 function randomGenerateCard() {
   const slider = document.getElementById("cardRange");
   const cardCount = slider.value;
@@ -40,10 +42,11 @@ function randomGenerateCard() {
   }
   
   const rowSize = cardCount % 2 === 0 ? 4 : 3;
-  createCardElements(mainElement, rowSize, cardCount, result);
+  createRow(mainElement, rowSize, cardCount, result);
 }
 
-function createCardElements(mainElement, rowSize, cardCount, result) {
+// Functions to create card elements
+function createRow(mainElement, rowSize, cardCount, result) {
   let rowContainer = null;
 
   for (let i = 0; i < cardCount; i++) {
@@ -53,17 +56,17 @@ function createCardElements(mainElement, rowSize, cardCount, result) {
       mainElement.appendChild(rowContainer);
     }
 
-    const cardElement = createCardElement(i, result[i]);
-    rowContainer.appendChild(cardElement);
+    const card = createCard(i, result[i]);
+    rowContainer.appendChild(card);
   }
 }
 
-function createCardElement(index, cardValue) {
-  const cardElement = document.createElement('div');
-  cardElement.classList.add('card');
-  cardElement.id = `card-${index + 1}`;
-  cardElement.style.animationDelay = `${index / (2*index+4)}s`;
-  cardElement.onclick = function () {
+function createCard(index, cardValue) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+  card.id = `card-${index + 1}`;
+  card.style.animationDelay = `${index / (2*index+4)}s`;
+  card.onclick = function () {
     if (!this.classList.contains('flipped')) {
       this.classList.toggle('flipped');
     }
@@ -71,15 +74,13 @@ function createCardElement(index, cardValue) {
   };
 
   const frontFace = createFrontFace();
-  cardElement.appendChild(frontFace); 
+  card.appendChild(frontFace); 
   
-  const frontImg = document.createElement('img');
-  frontImg.src = "img/" + cardValue + "_tarot.png";
-  frontImg.alt = `Tarot Card ${index + 1}`;
+  const frontImg = createFrontImg(index, cardValue);
   frontFace.appendChild(frontImg);
 
   const backFace = createBackFace();
-  cardElement.appendChild(backFace);
+  card.appendChild(backFace);
   
   const deleteButton = createDeleteButton();
   frontFace.appendChild(deleteButton);
@@ -87,15 +88,24 @@ function createCardElement(index, cardValue) {
   const draggableZone = createDraggableZone();
   frontFace.appendChild(draggableZone);   
 
-  return cardElement;
+  return card;
 }
 
+// Helper functions to create individual parts of card elements
 function createFrontFace() {
   const frontFace = document.createElement('div');
-  frontFace.classList.add('front')
+  frontFace.classList.add('front');
   
   return frontFace;
-};
+}
+
+function createFrontImg(index, cardValue) {
+  const frontImg = document.createElement('img');
+  frontImg.src = "img/" + cardValue + "_tarot.png";
+  frontImg.alt = `Tarot Card ${index + 1}`;
+  
+  return frontImg;
+}
 
 function createBackFace() {
   const backFace = document.createElement('img');
@@ -104,27 +114,29 @@ function createBackFace() {
   backFace.classList.add('back');
   
   return backFace;
-};
+}
 
 function createDeleteButton() {
   const deleteButton = document.createElement('div');
   deleteButton.classList.add('delete-button');
   
   return deleteButton;
-};
+}
 
 function createDraggableZone() {
   const draggableZone = document.createElement('div');
   draggableZone.classList.add('draggable-zone');
   
   return draggableZone; 
-};
+}
 
+// Function to get the description of a card
 function getDescription(cardIndex) {
   const description = tarotDescriptions[cardIndex];
   document.getElementById("description").innerHTML = description;
 }
 
+// Event listener for the card range slider
 const slider = document.getElementById('cardRange');
 slider.addEventListener("input", function () {
   document.getElementById("cardCount").textContent = this.value;
