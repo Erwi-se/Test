@@ -118,6 +118,7 @@ function createFrontFace() {
 
 function createFrontImg(index, cardValue) {
   const frontImg = document.createElement('img');
+  frontImg.loading = "lazy"; // Add lazy loading  
   frontImg.src = "img/" + cardValue + "_tarot.png";
   frontImg.alt = `Tarot Card ${index + 1}`;
   frontImg.decoding = "async"; // Add async decoding
