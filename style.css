@@ -16,6 +16,7 @@
 /* =================
    LAYOUT
    ================= */
+/* Main container contain row container */
 .container {
   display: flex;
   flex-wrap: wrap;
@@ -24,6 +25,7 @@
   aspect-ratio: 5 / 4; 
 }
 
+/* Row container contain row of cars */
 .row-container {
   display: flex;
   flex-wrap: wrap;
@@ -36,6 +38,8 @@
 /* =================
    CARD STYLES
    ================= */
+   
+/* Card Styles */ 
 .card {
   width: 20%;
   cursor: pointer;
@@ -45,6 +49,7 @@
   animation: getCard 0.5s ease-in;
 }
 
+/* Card Face And Card Behind Styles */
 .card img {
   width: 100%;
   backface-visibility: hidden;
@@ -56,6 +61,7 @@
   backface-visibility: hidden; /* Ensure proper rendering */
 }
 
+/* Card Behind Styles */ 
 .card .back {
   position: absolute;
   top: 0;
@@ -63,20 +69,28 @@
   backface-visibility: hidden; /* Ensure proper rendering */
 }
 
-/* Delete Button Styles */
+/* =================
+   CARD STATES
+   ================= */
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* =================
+   CARD UI STYLE
+   ================= */
+/* All UI need to function only when card is flipped state */
+
+/* Delete Button */
 .card.flipped .delete-button {
   position: absolute;
-  top: 1%;
+  top: 1.5%;
   right: 2%;
-  width: 8%;
-  height: 5%;
+  width: 8.2%;
+  height: 4.2%;
   display: block;
   cursor: pointer;
   z-index: 2; /* Ensure the button is on top */
-}
-
-.card .delete-button {
-  display: none; /* Hide the delete button */
 }
 
 /* Draggable Zone Styles */
@@ -91,66 +105,50 @@
   z-index: 1; /* Ensure the draggable zone is on top */
 }
 
-.card .draggable-zone {
-  display: none; /* Hide the draggable zone */
+
+/* =================
+   CARD UI STATES
+   ================= */
+/* Hide the delete button if card is not in flipped state */
+.card .delete-button {
+  display: none; 
 }
+
+/* Highlight button on hover */ 
+.card.flipped .delete-button:hover {
+  background: #fff9;
+} 
+
+/* Hide the draggable zone button if card is not in flipped state */ 
+.card .draggable-zone {
+  display: none;
+}
+
 /* =================
    CARD ANIMATIONS
    ================= */
+/* Get card animation */
 @keyframes getCard {
   from {
     opacity: 0;
-    transform: translateY(-25%); /* Start above the original position */
+    transform: translateY(-10%);
   }
   to {
     opacity: 1;
-    transform: translateY(0); /* End at the original position */
+    transform: translateY(0);
   }
 }
 
+/* Delete card animation */
 @keyframes deleteCard {
   from {
     opacity: 1;
-    transform: scale(1) rotateY(0deg);
+    transform: scale(1);
   }
   to {
     opacity: 0;
-    transform: scale(0) rotateY(0deg);
+    transform: scale(0);
   }
-}
-
-@keyframes deleteCardFlipped {
-  from {
-    opacity: 1;
-    transform: scale(1) rotateY(180deg);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0) rotateY(180deg);
-  }
-}
-
-/* =================
-   CARD STATES
-   ================= */
-.card.flipped {
-  transform: rotateY(180deg); /* Flip the card */
-}
-
-.card.deleting {
-  animation: deleteCard 0.5s forwards;
-}
-
-.card.deleting .front {
-  backface-visibility: visible;
-}
-
-.card.flipped.deleting {
-  animation: deleteCardFlipped 0.5s forwards;
-}
-
-.card.flipped.deleting .back {
-  display: none; /* Hide the back face */
 }
 
 /* =================
@@ -165,16 +163,7 @@
     "footer footer" 1fr
     / 2fr 1fr;
   }
-  header {
-    grid-area: header;
-  }
-  main {
-    grid-area: main;
-  }
-  aside {
-    grid-area: aside;
-  }
-  footer {
-    grid-area: footer;
-  }
-}
+  header { grid-area: header; }
+  main { grid-area: main; }
+  aside { grid-area: aside; }
+  footer { grid-area: footer; } 
