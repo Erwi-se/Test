@@ -1,14 +1,3 @@
-function preloadImages() {
-    // Preload card backs
-    new Image().src = "img/tarot_back.png";
-    
-    // Preload all tarot cards
-    for (let i = 0; i < 22; i++) {
-        new Image().src = `img/${i}_tarot.png`;
-    }
-}
-
-// Call this when the page loads
 document.addEventListener('DOMContentLoaded', preloadImages);
 
 // Tarot card descriptions
@@ -35,6 +24,17 @@ const tarotDescriptions = {
   19: "The Sun", 
   20: "Judgement",
   21: "The World"
+};
+
+const CardState = {
+  INITIAL: 'initial',
+  DRAWING: 'drawing',
+  DRAWN: 'drawn',
+  FLIPPING: 'flipping',
+  FLIPPED: 'flipped',
+  SELECTED: 'selected',
+  DRAGGING: 'dragging',
+  DELETING: 'deleting'
 }; 
 
 // Main function to generate random tarot cards
@@ -79,15 +79,43 @@ function createCardElement(index, cardValue) {
   const cardElement = document.createElement('div');
   cardElement.classList.add('card');
   cardElement.id = `card-${index + 1}`;
+  
+  // Set initial state
+  cardElement.dataset.state = CardState.INITIAL;
+  
+  // Start drawing animation
   cardElement.style.animationDelay = `${index / (2*index+4)}s`;
+  cardElement.dataset.state = CardState.DRAWING;
+  
   cardElement.addEventListener('animationend', () => {
-  cardElement.style.opacity = 1;
+    cardElement.style.opacity = 1;
+    cardElement.dataset.state = CardState.DRAWN;
   });
-  cardElement.onclick = function () {
-    if (!this.classList.contains('flipped')) {
-      this.classList.toggle('flipped');
+  
+  // Handle card click for flipping
+  cardElement.onclick = function() {
+    if (this.dataset.state === CardState.DRAWN) {
+      this.dataset.state = CardState.FLIPPING;
+      this.style.transform = 'rotateY(180deg)';
+      
+      // After flip animation completes
+      this.addEventListener('transitionend', () => {
+        if (this.dataset.state === CardState.FLIPPING) {
+          this.dataset.state = CardState.FLIPPED;
+        }
+      }, { once: true });
+      
+      getDescription(cardValue);
     }
-    getDescription(cardValue);
+    // Handle selection - moved inside the main click handler
+    else if (this.dataset.state === CardState.FLIPPED) {
+      deselectAllCards(this); // Deselect all other cards
+      this.dataset.state = CardState.SELECTED;
+      this.style.transform = 'rotateY(180deg) scale(1.05)';
+    } else if (this.dataset.state === CardState.SELECTED) {
+      this.dataset.state = CardState.FLIPPED;
+      this.style.transform = 'rotateY(180deg)';
+    }
   };
 
   const frontFace = createFrontFace();
@@ -99,13 +127,24 @@ function createCardElement(index, cardValue) {
   const backFace = createBackFace();
   cardElement.appendChild(backFace);
   
-  const deleteButton = createDeleteButton();
+  const deleteButton = createDeleteButton(cardElement);
   frontFace.appendChild(deleteButton);
 
-  const draggableZone = createDraggableZone();
-  frontFace.appendChild(draggableZone);   
+  const draggableZone = createDraggableZone(cardElement);
+  frontFace.appendChild(draggableZone);
 
   return cardElement;
+}
+
+// Add this function to handle deselecting all other cards
+function deselectAllCards(exceptCard) {
+  const selectedCards = document.querySelectorAll(`.card[data-state="${CardState.SELECTED}"]`);
+  selectedCards.forEach(card => {
+    if (card !== exceptCard) {
+      card.dataset.state = CardState.FLIPPED;
+      card.style.transform = 'rotateY(180deg)';
+    }
+  });
 }
 
 // Helper functions to create individual parts of card elements
@@ -135,16 +174,49 @@ function createBackFace() {
   return backFace;
 }
 
-function createDeleteButton() {
+ 
+function createDeleteButton(cardElement) {
   const deleteButton = document.createElement('div');
   deleteButton.classList.add('delete-button');
+  
+  function handleDelete(e) {
+    e.stopPropagation(); // Prevent card click
+    
+    // Force state to DELETING
+    cardElement.dataset.state = CardState.DELETING;
+    
+    // Remove the card
+    if (cardElement && cardElement.parentNode) {
+      cardElement.parentNode.removeChild(cardElement);
+    }
+  }
 
+  // Add the event listener
+  deleteButton.addEventListener('click', handleDelete);
+  
   return deleteButton;
 }
 
-function createDraggableZone() {
+function createDraggableZone(cardElement) {
   const draggableZone = document.createElement('div');
   draggableZone.classList.add('draggable-zone');
+  
+  // Dragging state handling
+  draggableZone.addEventListener('mousedown', (e) => {
+    if ([CardState.FLIPPED, CardState.SELECTED].includes(cardElement.dataset.state)) {
+      cardElement.dataset.state = CardState.DRAGGING;
+      cardElement.style.cursor = 'grabbing';
+      cardElement.style.zIndex = '1000';
+    }
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (cardElement.dataset.state === CardState.DRAGGING) {
+      cardElement.dataset.state = CardState.FLIPPED;
+      cardElement.style.cursor = '';
+      cardElement.style.zIndex = '';
+    }
+  }); 
   
   return draggableZone; 
 }
@@ -160,3 +232,14 @@ const slider = document.getElementById('cardRange');
 slider.addEventListener("input", function () {
   document.getElementById("cardCount").textContent = this.value;
 });
+
+// Call this when the page loads 
+function preloadImages() {
+  // Preload card backs
+  new Image().src = "img/tarot_back.png";
+    
+  // Preload all tarot cards
+  for (let i = 0; i < 22; i++) {
+    new Image().src = `img/${i}_tarot.png`;
+   }
+}
