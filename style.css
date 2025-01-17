@@ -59,13 +59,15 @@
 /* Card Face Styles */
 .card .front {
   transform: rotateY(180deg);
+  backface-visibility: hidden;
 }
 
 /* Card Behind Styles */ 
 .card .back {
   position: absolute;
   top: 0;
-  left: 0;  
+  left: 0;
+  backface-visibility: hidden;
 }
 
 /* =================
@@ -140,7 +142,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
 
 /* Delete card animation */
 @keyframes deleteCard {
