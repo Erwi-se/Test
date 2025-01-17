@@ -42,11 +42,11 @@ function randomGenerateCard() {
   }
   
   const rowSize = cardCount % 2 === 0 ? 4 : 3;
-  createRow(mainElement, rowSize, cardCount, result);
+  creatRowContainer(mainElement, rowSize, cardCount, result);
 }
 
-// Functions to create card elements
-function createRow(mainElement, rowSize, cardCount, result) {
+// Functions to create row container
+function creatRowContainer(mainElement, rowSize, cardCount, result) {
   let rowContainer = null;
 
   for (let i = 0; i < cardCount; i++) {
@@ -56,17 +56,18 @@ function createRow(mainElement, rowSize, cardCount, result) {
       mainElement.appendChild(rowContainer);
     }
 
-    const card = createCard(i, result[i]);
-    rowContainer.appendChild(card);
+    const cardElement = createCardElement(i, result[i]);
+    rowContainer.appendChild(cardElement);
   }
 }
 
-function createCard(index, cardValue) {
-  const card = document.createElement('div');
-  card.classList.add('card');
-  card.id = `card-${index + 1}`;
-  card.style.animationDelay = `${index / (2*index+4)}s`;
-  card.onclick = function () {
+// Functions to create card element
+function createCardElement(index, cardValue) {
+  const cardElement = document.createElement('div');
+  cardElement.classList.add('card');
+  cardElement.id = `card-${index + 1}`;
+  cardElement.style.animationDelay = `${index / (2*index+4)}s`;
+  cardElement.onclick = function () {
     if (!this.classList.contains('flipped')) {
       this.classList.toggle('flipped');
     }
@@ -74,13 +75,13 @@ function createCard(index, cardValue) {
   };
 
   const frontFace = createFrontFace();
-  card.appendChild(frontFace); 
+  cardElement.appendChild(frontFace); 
   
   const frontImg = createFrontImg(index, cardValue);
   frontFace.appendChild(frontImg);
 
   const backFace = createBackFace();
-  card.appendChild(backFace);
+  cardElement.appendChild(backFace);
   
   const deleteButton = createDeleteButton();
   frontFace.appendChild(deleteButton);
@@ -88,7 +89,7 @@ function createCard(index, cardValue) {
   const draggableZone = createDraggableZone();
   frontFace.appendChild(draggableZone);   
 
-  return card;
+  return cardElement;
 }
 
 // Helper functions to create individual parts of card elements
