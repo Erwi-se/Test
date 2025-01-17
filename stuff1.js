@@ -86,7 +86,7 @@ function createCardElement(index, cardValue) {
   const backFace = createBackFace();
   cardElement.appendChild(backFace);
   
-  const deleteButton = createDeleteButton(cardElement);
+  const deleteButton = createDeleteButton();
   frontFace.appendChild(deleteButton);
 
   const draggableZone = createDraggableZone();
@@ -120,15 +120,10 @@ function createBackFace() {
   return backFace;
 }
 
-function createDeleteButton(cardElement) {
+function createDeleteButton() {
   const deleteButton = document.createElement('div');
   deleteButton.classList.add('delete-button');
-  deleteButton.onclick = function () {
-    cardElement.style.animation = 'deleteCard 0.5s ease-out';
-    cardElement.addEventListener('animationend', () => {
-      cardElement.remove();
-    });
-  };
+
   return deleteButton;
 }
 
