@@ -1,3 +1,16 @@
+function preloadImages() {
+    // Preload card backs
+    new Image().src = "img/tarot_back.png";
+    
+    // Preload all tarot cards
+    for (let i = 0; i < 22; i++) {
+        new Image().src = `img/${i}_tarot.png`;
+    }
+}
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', preloadImages);
+
 // Tarot card descriptions
 const tarotDescriptions = {
   0: "The Fool",
@@ -105,8 +118,10 @@ function createFrontFace() {
 
 function createFrontImg(index, cardValue) {
   const frontImg = document.createElement('img');
+  frontImg.loading = "lazy"; // Add lazy loading
   frontImg.src = "img/" + cardValue + "_tarot.png";
   frontImg.alt = `Tarot Card ${index + 1}`;
+  frontImg.decoding = "async"; // Add async decoding
   
   return frontImg;
 }
