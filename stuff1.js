@@ -82,12 +82,6 @@ function createCardElement(index, cardValue) {
   
   // Set initial state
   cardElement.dataset.state = CardState.INITIAL;
-  cardElement.dataset.loading = "true"; // Add loading state
-  
-  // Create loading spinner
-  const spinner = document.createElement('div');
-  spinner.classList.add('loading-spinner');
-  cardElement.appendChild(spinner);
   
   // Start drawing animation
   cardElement.style.animationDelay = `${index / (2*index+4)}s`;
@@ -133,9 +127,6 @@ function createCardElement(index, cardValue) {
   const backFace = createBackFace();
   cardElement.appendChild(backFace);
   
-  setupImageLoadHandlers(frontImg, cardElement);
-  setupImageLoadHandlers(backFace, cardElement);
-  
   const deleteButton = createDeleteButton(cardElement);
   frontFace.appendChild(deleteButton);
 
@@ -164,49 +155,19 @@ function createFrontFace() {
   return frontFace;
 }
 
-// Modify createFrontImg function
 function createFrontImg(index, cardValue) {
   const frontImg = document.createElement('img');
-  frontImg.loading = "lazy";
-  
-  // Create a new image object to preload
-  const tempImg = new Image();
-  tempImg.src = "img/" + cardValue + "_tarot.png";
-  
-  // Only set the actual image src after preloading
-  tempImg.onload = () => {
-    frontImg.src = tempImg.src;
-  };
-  
-  tempImg.onerror = () => {
-    console.error(`Failed to load image: ${tempImg.src}`);
-    frontImg.dataset.error = "true";
-  };
-  
+  frontImg.loading = "lazy"; // Add lazy loading  
+  frontImg.src = "img/" + cardValue + "_tarot.png";
   frontImg.alt = `Tarot Card ${index + 1}`;
-  frontImg.decoding = "async";
+  frontImg.decoding = "async"; // Add async decoding
   
   return frontImg;
 }
 
-// Modify createBackFace function
 function createBackFace() {
   const backFace = document.createElement('img');
-  
-  // Create a new image object to preload
-  const tempImg = new Image();
-  tempImg.src = "img/tarot_back.png";
-  
-  // Only set the actual image src after preloading
-  tempImg.onload = () => {
-    backFace.src = tempImg.src;
-  };
-  
-  tempImg.onerror = () => {
-    console.error(`Failed to load image: ${tempImg.src}`);
-    backFace.dataset.error = "true";
-  };
-  
+  backFace.src = "img/tarot_back.png";
   backFace.alt = `Unknown`;
   backFace.classList.add('back');
   
@@ -272,46 +233,13 @@ slider.addEventListener("input", function () {
   document.getElementById("cardCount").textContent = this.value;
 });
 
-// Add this new function to handle image loading
-function setupImageLoadHandlers(imgElement, cardElement) {
-  imgElement.addEventListener('load', () => {
-    cardElement.dataset.loading = "false";
-  });
-
-  imgElement.addEventListener('error', () => {
-    cardElement.dataset.loading = "false";
-    cardElement.dataset.error = "true";
-    console.error(`Failed to load image: ${imgElement.src}`);
-  });
-}
-
-// Update the preloadImages function
+// Call this when the page loads 
 function preloadImages() {
-  const loadingPromises = [];
-  
   // Preload card backs
-  loadingPromises.push(new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = resolve;
-    img.onerror = reject;
-    img.src = "img/tarot_back.png";
-  }));
+  new Image().src = "img/tarot_back.png";
     
   // Preload all tarot cards
   for (let i = 0; i < 22; i++) {
-    loadingPromises.push(new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = resolve;
-      img.onerror = reject;
-      img.src = `img/${i}_tarot.png`;
-    }));
-  }
-  
-  // Handle all preloads
-  Promise.allSettled(loadingPromises).then(results => {
-    const failedLoads = results.filter(result => result.status === 'rejected');
-    if (failedLoads.length > 0) {
-      console.warn(`Failed to preload ${failedLoads.length} images`);
-    }
-  });
+    new Image().src = `img/${i}_tarot.png`;
+   }
 }
