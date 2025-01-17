@@ -67,6 +67,9 @@ function createCardElement(index, cardValue) {
   cardElement.classList.add('card');
   cardElement.id = `card-${index + 1}`;
   cardElement.style.animationDelay = `${index / (2*index+4)}s`;
+  cardElement.addEventListener('animationend', () => {
+  cardElement.style.opacity = 1;
+  });
   cardElement.onclick = function () {
     if (!this.classList.contains('flipped')) {
       this.classList.toggle('flipped');
@@ -83,7 +86,7 @@ function createCardElement(index, cardValue) {
   const backFace = createBackFace();
   cardElement.appendChild(backFace);
   
-  const deleteButton = createDeleteButton();
+  const deleteButton = createDeleteButton(cardElement);
   frontFace.appendChild(deleteButton);
 
   const draggableZone = createDraggableZone();
@@ -117,10 +120,15 @@ function createBackFace() {
   return backFace;
 }
 
-function createDeleteButton() {
+function createDeleteButton(cardElement) {
   const deleteButton = document.createElement('div');
   deleteButton.classList.add('delete-button');
-  
+  deleteButton.onclick = function () {
+    cardElement.style.animation = 'deleteCard 0.5s ease-out';
+    cardElement.addEventListener('animationend', () => {
+      cardElement.remove();
+    });
+  };
   return deleteButton;
 }
 
