@@ -58,6 +58,7 @@
 
 /* Card Face Styles */
 .card .front {
+  position: relative;
   transform: rotateY(180deg);
   backface-visibility: hidden;
 }
@@ -88,7 +89,7 @@
 }
 
 .card[data-state="selected"] {
-  transform: rotateY(180deg) translateY(-5%);
+  transform: rotateY(180deg) translateY(-5%);  
 }
 
 .card[data-state="deleting"] {
@@ -96,6 +97,12 @@
   transform: rotateY(180deg);
   pointer-events: none;  
 }
+
+/* Ensure front face stays visible during deletion */
+.card[data-state="deleting"] .front {
+  backface-visibility: visible;  
+  z-index: 2;  
+} 
 
 .card[data-state="dragging"] {
   cursor: grabbing;
