@@ -47,7 +47,7 @@
   transition: transform 0.6s;
   position: relative;
   animation: getCard 0.5s ease-in;
-  opacity: 0;
+  opacity: 0;  
 }
 
 /* Card Face And Card Behind Styles */
@@ -84,10 +84,16 @@
 .card[data-state="flipping"],
 .card[data-state="flipped"] {
   transition: transform 0.6s;
+  transform: rotateY(180deg);
 }
 
 .card[data-state="selected"] {
   box-shadow: 0 0 20px rgba(255,255,255,0.5);
+  transform: rotateY(180deg) translateY(-5%);
+}
+
+.card[data-state="deleting"] {
+  animation: deleteCard 2s ease-in;
 }
 
 .card[data-state="dragging"] {
