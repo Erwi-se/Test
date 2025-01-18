@@ -88,12 +88,13 @@
 }
 
 .card[data-state="selected"] {
-  box-shadow: 0 0 20px rgba(255,255,255,0.5);
   transform: rotateY(180deg) translateY(-5%);
 }
 
 .card[data-state="deleting"] {
-  animation: deleteCard 2s ease-in;
+  animation: deleteCard 0.5s ease-in;
+  transform: rotateY(180deg);
+  pointer-events: none;  
 }
 
 .card[data-state="dragging"] {
@@ -160,6 +161,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
 
 /* Delete card animation */
 @keyframes deleteCard {
