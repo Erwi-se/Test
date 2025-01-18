@@ -37,6 +37,9 @@ const CardState = {
   DELETING: 'deleting'
 }; 
 
+let lastDrawTime = 0;
+const RATE_LIMIT_COOLDOWN = 2000;
+
 // Main function to generate random tarot cards
 function randomGenerateCard() {
   const slider = document.getElementById("cardRange");
@@ -44,6 +47,16 @@ function randomGenerateCard() {
 
   const array = [...Array(22).keys()];
   const result = [];
+  
+  const currentTime = Date.now();
+  const timeElapsed = currentTime - lastDrawTime;
+  
+  if (timeElapsed < RATE_LIMIT_COOLDOWN) {
+    return; // Don't proceed with card generation if within cooldown
+  }
+
+  // Update last draw time
+  lastDrawTime = currentTime;
 
   const mainElement = document.querySelector('main.container');
   mainElement.innerHTML = '';
@@ -96,7 +109,6 @@ function createCardElement(index, cardValue) {
   cardElement.onclick = function() {
     if (this.dataset.state === CardState.DRAWN) {
       this.dataset.state = CardState.FLIPPING;
-      this.style.transform = 'rotateY(180deg)';
       
       // After flip animation completes
       this.addEventListener('transitionend', () => {
@@ -104,17 +116,16 @@ function createCardElement(index, cardValue) {
           this.dataset.state = CardState.FLIPPED;
         }
       }, { once: true });
-      
-      getDescription(cardValue);
+    getDescription(cardValue);
+    
     }
     // Handle selection - moved inside the main click handler
     else if (this.dataset.state === CardState.FLIPPED) {
       deselectAllCards(this); // Deselect all other cards
       this.dataset.state = CardState.SELECTED;
-      this.style.transform = 'rotateY(180deg) scale(1.05)';
+      getDescription(cardValue);    
     } else if (this.dataset.state === CardState.SELECTED) {
       this.dataset.state = CardState.FLIPPED;
-      this.style.transform = 'rotateY(180deg)';
     }
   };
 
@@ -142,7 +153,6 @@ function deselectAllCards(exceptCard) {
   selectedCards.forEach(card => {
     if (card !== exceptCard) {
       card.dataset.state = CardState.FLIPPED;
-      card.style.transform = 'rotateY(180deg)';
     }
   });
 }
@@ -182,16 +192,10 @@ function createDeleteButton(cardElement) {
   function handleDelete(e) {
     e.stopPropagation(); // Prevent card click
     
-    // Force state to DELETING
-    cardElement.dataset.state = CardState.DELETING;
-    
-    // Remove the card
-    if (cardElement && cardElement.parentNode) {
-      cardElement.parentNode.removeChild(cardElement);
-    }
+    // Force state to DELETING        
+  cardElement.dataset.state = cardState.DELETING;
   }
-
-  // Add the event listener
+  
   deleteButton.addEventListener('click', handleDelete);
   
   return deleteButton;
