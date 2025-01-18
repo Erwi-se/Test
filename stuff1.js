@@ -38,7 +38,7 @@ const CardState = {
 }; 
 
 let lastDrawTime = 0;
-const RATE_LIMIT_COOLDOWN = 2000;
+const RATE_LIMIT_COOLDOWN = 1000;
 
 // Main function to generate random tarot cards
 function randomGenerateCard() {
@@ -103,12 +103,14 @@ function createCardElement(index, cardValue) {
   cardElement.addEventListener('animationend', () => {
     cardElement.style.opacity = 1;
     cardElement.dataset.state = CardState.DRAWN;
+    cardElement.style.animationDelay = '';
   });
   
   // Handle card click for flipping
   cardElement.onclick = function() {
     if (this.dataset.state === CardState.DRAWN) {
       this.dataset.state = CardState.FLIPPING;
+      deselectAllCards(this);
       
       // After flip animation completes
       this.addEventListener('transitionend', () => {
@@ -192,8 +194,18 @@ function createDeleteButton(cardElement) {
   function handleDelete(e) {
     e.stopPropagation(); // Prevent card click
     
-    // Force state to DELETING        
-  cardElement.dataset.state = cardState.DELETING;
+    // Set state to DELETING
+    cardElement.dataset.state = CardState.DELETING;
+    
+    // Add animation end listener to remove card after animation completes
+    cardElement.addEventListener('animationend', () => {
+      
+        cardElement.remove();
+        
+        // Update the layout if needed
+        updateLayout();
+      
+    }, { once: true });
   }
   
   deleteButton.addEventListener('click', handleDelete);
