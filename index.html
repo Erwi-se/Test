@@ -1,37 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-teal">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarot Card</title>
+  <title>Thẻ Bài Tarot</title>
+  <meta name="description" content="Xem Bài Tarot">
   <link rel="icon" type="image/png" href="tarot_back.png">
   <link rel="preload" as="image" href="img/tarot_back.png">
   <script src="stuff1.js" defer></script>
-  <noscript>Trang web này cần bật JavaScript!</noscript>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header>
-    <h1>Tarot Card</h1>
+<body class="outset bg-gray">
+   
+  <header class="title-bar bg-blue">
+    <img src="img/2_tarot.png">
+    <b>Tarot card</b>
+    <button class="close outset"></button>  
   </header>
-
-  <main class="container"></main>
+    
+  <main class="container inset bg-green"></main>
 
   <aside>
-    <div id="description">
-      Unknown
-    </div>
+    <div id="description">Unknown</div>
     <div id="setting">
       <h1>Setting</h1>
-      <button onclick="randomGenerateCard()">Lấy bài</button> <br>
-      <label for="cardRange">Số Bài:</label>
+      <button onclick="randomGenerateCard()" class="outset">Get card:</button> <br>
+      <label for="cardRange">Card amount:</label>
       <span id="cardCount">4</span><br>
-      <input type="range" min="1" max="6" value="4" id="cardRange">
+      <input type="range" min="1" max="6" value="4" id="cardRange">      
     </div>
   </aside>
-
+  
+  <hr>  
+  
   <footer>
-    Paccha là người vẽ
+    Paccha is the artist
   </footer>
+  
 </body>
 </html>
