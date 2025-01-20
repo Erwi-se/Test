@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Language" content="en">
   <title>Thẻ Bài Tarot</title>
   <meta name="description" content="Xem Bài Tarot">
   <link rel="icon" type="image/png" href="tarot_back.png">
@@ -10,32 +11,40 @@
   <script src="stuff1.js" defer></script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="outset bg-gray">
+<body>
+  
+  <div class="outset bg-gray bdr-ot-w2" >
    
   <header class="title-bar bg-blue">
     <img src="img/2_tarot.png">
     <b>Tarot card</b>
-    <button class="close outset"></button>  
+    <button class="close bdr-ot-w2 bg-gray"></button>  
   </header>
     
-  <main class="container inset bg-green"></main>
+  <main class="container bdr-in-w2 bg-green"></main>
 
   <aside>
-    <div id="description">Unknown</div>
+    <div id="description">Unknown</div><hr>
     <div id="setting">
       <h1>Setting</h1>
-      <button onclick="randomGenerateCard()" class="outset">Get card:</button> <br>
+      <button onclick="randomGenerateCard()" class="bdr-ot-w2 bg-gray">Get card:</button> <br>
       <label for="cardRange">Card amount:</label>
-      <span id="cardCount">4</span><br>
+      <span id="cardCount" class="bdr-in">4</span><br><br>
       <input type="range" min="1" max="6" value="4" id="cardRange">      
     </div>
-  </aside>
-  
-  <hr>  
+  </aside><hr>  
   
   <footer>
     Paccha is the artist
   </footer>
+  
+  </div>
+  
+  <div class="bg-gray bdr-ot-w2">
+    <button class="bdr-ot-w2 bg-gray">Menu</button>
+    <div class="bdr-in">00:00
+    </div>
+  </div>
   
 </body>
 </html>
