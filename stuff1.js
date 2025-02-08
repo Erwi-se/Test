@@ -20,7 +20,9 @@ function selectCard() {
 function addCard() {
   const isRandomMode = document.getElementById('selection-mode-random').checked;
   const cards = isRandomMode ? generateCard() : [selectCard()];
-  handleSubmit(cards);  
+  cards.forEach(card => {
+    WindowManager.openWindow();
+  });
 }
 
 function removeCard() {
@@ -36,10 +38,11 @@ const tarotDescriptions = [
   "Judgement", "The World"
 ];
 
-const id = 1;
+const id = 0;
 
 const categories = {
   tarotCard: {
+    title: `${id}_tarot.png`,
     description: tarotDescriptions[id],
     image: `img/${id}_tarot.png`
   },
@@ -208,7 +211,7 @@ const WindowManager = {
               <label for="selection-mode-random" class="radio__label">Random</label>
             </div>
           </div>
-          <button>Get card</button>
+          <button onclick="addCard()">Get card</button>
         `;
       break;
 
@@ -241,8 +244,7 @@ const WindowManager = {
     element.style.zIndex = window.zIndex;
     element.style.display = window.minimized ? 'none' : 'block';
   },
-
-  // Control handler with persistent listeners
+  
   addWindowControls(window, element) {
     const controls = {
       minimize: element.querySelector('.window__control--minimize'),
@@ -251,34 +253,67 @@ const WindowManager = {
       titleBar: element.querySelector('.window__title-bar')
     };
 
-    // One-time event listeners
+    // Event listeners for controls
     controls.minimize.onclick = () => this.minimizeWindow(window.id);
     controls.maximize.onclick = () => this.maximizeWindow(window.id);
     controls.close.onclick = () => this.closeWindow(window.id);
     
-    // Dragging logic
+    // Drag state variables
     let isDragging = false;
     let offset = { x: 0, y: 0 };
+    let mousemoveHandler, touchmoveHandler, endDragHandler;
 
-    controls.titleBar.onmousedown = (e) => {
+    const startDrag = (clientX, clientY) => {
       isDragging = true;
       offset = {
-        x: e.clientX - window.position.x,
-        y: e.clientY - window.position.y
+        x: clientX - window.position.x,
+        y: clientY - window.position.y
       };
+
+      // Define handlers
+      mousemoveHandler = (e) => {
+        if (!isDragging || window.maximized) return;
+        this.updatePosition(window.id, e.clientX - offset.x, e.clientY - offset.y);
+        this.updateWindowElement(window, element);
+      };
+
+      touchmoveHandler = (e) => {
+        if (!isDragging || window.maximized) return;
+        const touch = e.touches[0];
+        this.updatePosition(window.id, touch.clientX - offset.x, touch.clientY - offset.y);
+        this.updateWindowElement(window, element);
+      };
+
+      endDragHandler = () => {
+        isDragging = false;
+        document.removeEventListener('mousemove', mousemoveHandler);
+        document.removeEventListener('touchmove', touchmoveHandler);
+        document.removeEventListener('mouseup', endDragHandler);
+        document.removeEventListener('touchend', endDragHandler);
+      };
+
+      // Add event listeners
+      document.addEventListener('mousemove', mousemoveHandler);
+      document.addEventListener('touchmove', touchmoveHandler);
+      document.addEventListener('mouseup', endDragHandler);
+      document.addEventListener('touchend', endDragHandler);
+    };
+
+    // Mouse events
+    controls.titleBar.onmousedown = (e) => {
+      if (e.target.closest('.window__control')) return;
+      startDrag(e.clientX, e.clientY);
       this.bringToFront(window.id);
     };
 
-    document.onmousemove = (e) => {
-      if (isDragging && !window.maximized) {
-        this.updatePosition(window.id, e.clientX - offset.x, e.clientY - offset.y);
-        this.updateWindowElement(window, element);
-      }
-    };
-
-    document.onmouseup = () => {
-      isDragging = false;
-    };
+    // Touch events
+    controls.titleBar.addEventListener('touchstart', (e) => {
+      if (e.target.closest('.window__control')) return;
+      const touch = e.touches[0];
+      startDrag(touch.clientX, touch.clientY);
+      this.bringToFront(window.id); 
+      e.preventDefault();
+    });
   },
   
   // Optimized render method
@@ -337,20 +372,20 @@ const WindowManager = {
   },
   
   updateTaskbarItem(window, element) {
-  element.dataset.windowId = window.id;
+    element.dataset.windowId = window.id;
   
-  const imgEl = element.querySelector('.taskbar__item-icon');
-  const newSrc = `img/${window.type}_icon.png`;
-  if (imgEl.getAttribute('src') !== newSrc) {
-    imgEl.src = newSrc; // Only update if it's different
-  }
+    const imgEl = element.querySelector('.taskbar__item-icon');
+    const newSrc = `img/${window.type}_icon.png`;
+    if (imgEl.getAttribute('src') !== newSrc) {
+      imgEl.src = newSrc; // Only update if it's different
+    }
 
-  const labelEl = element.querySelector('.taskbar__item-label');
-  const newLabel = window.type.charAt(0).toUpperCase() + window.type.slice(1);
-  if (labelEl.textContent !== newLabel) {
-    labelEl.textContent = newLabel;
+    const labelEl = element.querySelector('.taskbar__item-label');
+    const newLabel = window.type.charAt(0).toUpperCase() + window.type.slice(1);
+    if (labelEl.textContent !== newLabel) {
+      labelEl.textContent = newLabel;
+    }
   }
-}
   
 };
 
