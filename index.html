@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-teal">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Language" content="en">  
+  <title>Tarot card</title>
+  <meta name="description" content="Xem Bài Tarot">
+  <link rel="icon" type="image/png" href="img/tarot_back.png">
+  <link rel="preload" as="image" href="img/tarot_back.png">
+  <script src="stuff1.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="effect-container">
+    <div class="effect-layer--1"></div>
+    <div class="effect-layer--2"></div>
+    <div class="effect-layer--3"></div>
+  </div>
+  
+  <!-- Desktop Area -->
+  <div class="desktop" id="desktop-area">
+    <!-- Desktop Shortcuts -->
+    <div class="desktop-shortcuts">
+      <div class="desktop-shortcut" data-action="tarotCard">
+        <img src="img/tarot_icon.png" class="desktop-shortcut__icon">
+        <div class="desktop-shortcut__label">Tarot Card</div>
+      </div>
+      <div class="desktop-shortcut" data-action="popUp">
+        <img src="img/popup_icon.png" class="desktop-shortcut__icon">
+        <div class="desktop-shortcut__label">Pop Up</div>
+      </div>
+      <div class="desktop-shortcut" data-action="about">
+        <img src="img/about_icon.png" class="desktop-shortcut__icon">
+        <div class="desktop-shortcut__label">About</div>
+      </div>
+    </div>
+  </div>
+    
+  <!-- Window Template --> 
+  <template id="window-template">
+    <div class="window bdr-w2-ot">
+      <div class="window__title-bar">
+        <img src="img/window_icon.png" class="window__icon">
+        <span class="window__title">New Window</span>
+        <div class="window__controls">
+          <button class="window__control window__control--minimize">_</button>
+          <button class="window__control window__control--maximize">□</button>
+          <button class="window__control window__control--close">×</button>
+        </div>
+      </div>
+      <div class="window__content"></div>
+    </div>
+  </template>
+  
+  <!-- Taskbar Item Template -->
+  <template id="taskbar-item-template">
+    <button class="taskbar__item bdr-w2-ot">
+      <img src="img/default_icon.png" class="taskbar__item-icon">
+      <div class="taskbar__item-label">New Application</div>
+    </button>
+  </template>
+  
+<!-- Start Menu -->
+  <div class="start-menu bdr-w2-ot" id="start-menu">
+    <div class="start-menu__shortcut" data-action="tarotCard">
+      <img src="img/tarot_icon.png" class="start-menu__icon">
+      <div class="start-menu__label">Tarot Card</div>
+    </div>
+    <div class="start-menu__shortcut" data-action="popUp">
+      <img src="img/popup_icon.png" class="start-menu__icon">
+      <div class="start-menu__label">Pop Up</div>
+    </div>
+    <div class="start-menu__shortcut" data-action="about">
+      <img src="img/about_icon.png" class="start-menu__icon">
+      <div class="start-menu__label">About</div>
+    </div>
+    <div class="start-menu__shortcut" data-action="shutDown">
+      <img src="img/shutdown_icon.png" class="start-menu__icon">
+      <div class="start-menu__label">Shutdown...</div>
+    </div>
+  </div>
+
+  <!-- Taskbar -->
+  <div class="taskbar bdr-w2-ot">
+    <button class="taskbar__start-button bdr-w2-ot" onclick="toggleStartMenu()">
+      <img src="img/start_icon.ico" class="taskbar__icon">Start
+    </button>
+    <div class="taskbar__items" id="open-apps"></div>
+    <div class="system-tray bdr-in">
+      <button onclick="openFullScreen()" class="bdr-ot">Full Screen</button>
+      <img src="img/volume_icon.ico" class="system-tray__icon">
+      <div class="system-tray__clock" id="clock-display">12:00 PM</div>
+    </div>
+  </div>
+  
+</body>
+</html>
