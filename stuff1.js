@@ -1,65 +1,47 @@
-function generateCard() {
-  const slider = document.getElementById("slider");
-  const cardCount = 5;
-
-  const numbers = [...Array(22).keys()];
-  
-  for (let i = 0; i < cardCount; i++) {
-    const randomIndex = i + Math.floor(Math.random() * (22 - i));
-    [numbers[i], numbers[randomIndex]] = [numbers[randomIndex], numbers[i]];
-  }
-  return numbers.splice(0,cardCount);
-}
-
-function selectCard() {
-  
-  return 20;
-}
-
-// Always return arrays for uniform handling
-function addCard() {
-  const isRandomMode = document.getElementById('selection-mode-random').checked;
-  const cards = isRandomMode ? generateCard() : [selectCard()];
-  cards.forEach(card => {
-    WindowManager.openWindow();
-  });
-}
-
-function removeCard() {
-}
-
-// Use array for direct indexing and maintainability
-const tarotDescriptions = [
-  "The Fool", "The Magician", "The High Priestess", "The Empress",
-  "The Emperor", "The Hierophant", "The Lovers", "The Chariot",
-  "Strength", "The Hermit", "Wheel of Fortune", "Justice",
-  "The Hanged Man", "Death", "Temperance", "The Devil",
-  "The Tower", "The Star", "The Moon", "The Sun", 
-  "Judgement", "The World"
-];
-
-const id = 0;
-
-const categories = {
-  tarotCard: {
-    title: `${id}_tarot.png`,
-    description: tarotDescriptions[id],
-    image: `img/${id}_tarot.png`
-  },
-  popUp: {
-    image: `img/${id}_popUp.png`
-  }
-};
-
-// stuff1.js - Updated with state management
-function openFullScreen() {
-  document.documentElement.requestFullscreen();
-};
-
-function toggleStartMenu() {
-  const x = document.getElementById("start-menu");
-  x.style.display = x.style.display === "none" ? "block" : "none";
-};
+// ========== WINDOW REGISTRY ==========
+const WindowRegistry = new Map()
+  .set('tarotCard', {
+    title: 'Tarot Card Settings',
+    icon: 'img/tarotCard_icon.png',
+    content: () => `
+      <h2 class="setting-panel__heading">Settings</h2>
+      <div class="setting-group">
+        <label class="setting-group__label">Card Amount:<span>4</span></label><br>
+        <input type="range" min="1" max="6" value="4" 
+        class="setting__slider" id="card-amount-slider">
+      </div>
+      <div class="setting-group">
+        <p class="setting-group__label">Selection Mode:</p>
+        <div class="radio-option">
+          <input type="radio" name="selection-mode" 
+          id="selection-mode-manual" class="radio__input">
+          <label for="selection-mode-manual" class="radio__label">Manual</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" name="selection-mode" 
+          id="selection-mode-random" class="radio__input" checked>
+          <label for="selection-mode-random" class="radio__label">Random</label>
+        </div>
+      </div>
+      <button onclick="addCard()">Get card</button>
+    `
+  })
+  .set('popUp', {
+    title: 'Pop-up Settings',
+    icon: 'img/popUp_icon.png',
+    content: () => `
+      <label>Switcher</label>
+      <input type="range" min="0" max="1">
+    `
+  })
+  .set('about', {
+    title: 'About',
+    icon: 'img/popUp_icon.png',
+    content: () => `
+      <label>Switcher</label>
+      <input type="range" min="0" max="1">
+    `
+  }); 
 
 // ========== STATE MANAGEMENT SYSTEM ==========
 const state = {
@@ -68,8 +50,7 @@ const state = {
   settings: {
     cardAmount: 4,
     selectionMode: 'random'
-  },
-  taskbarItems: new Map()
+  }
 };
 
 const createWindowState = (type) => ({
@@ -82,40 +63,26 @@ const createWindowState = (type) => ({
   zIndex: state.nextZIndex++,
 });
 
+// ========== OPTIMIZED WINDOW MANAGER ==========
 const WindowManager = {
-  // Add cache for window templates and DOM elements
-  templateCache: null,
-  domCache: new Map(),
-  
-  // Initialize template cache once
-  initTemplates() {
-    if (!this.templateCache) {
-      this.templateCache = {
-        window: document.getElementById('window-template').content,
-        taskbarItem: document.getElementById('taskbar-item-template').content
-      };
-    }
+  templates: {
+    window: document.getElementById('window-template').content,
+    taskbarItem: document.getElementById('taskbar-item-template').content
   },
-  
+  domCache: new Map(),
+
   openWindow(type) {
-    // Check if a window of this type is already open.
     const existingWindow = state.windows.find(win => win.type === type);
-    if (existingWindow) {
-      // If found, bring it to the front and return the existing instance.
-      this.bringToFront(existingWindow.id);
-      return existingWindow;
-    }
-  
-    // Otherwise, create a new window.
+    if (existingWindow) return this.bringToFront(existingWindow.id);
+
     const newWindow = createWindowState(type);
     state.windows.push(newWindow);
     this.render();
     return newWindow;
-  }, 
+  },
 
   closeWindow(id) {
     state.windows = state.windows.filter(window => window.id !== id);
-    state.taskbarItems.delete(id);
     this.render();
   },
 
@@ -127,29 +94,20 @@ const WindowManager = {
 
   maximizeWindow(id) {
     const window = state.windows.find(w => w.id === id);
-    if (window) {
-      window.maximized = !window.maximized;
+    if (!window) return;
 
-      if (window.maximized) {
-        // Store original state before maximizing
-        window.originalSize = { ...window.size };
-        window.originalPosition = { ...window.position };
-      
-        // Set new dimensions and position
-        window.size = {
-          width: document.documentElement.clientWidth,
-          height: document.documentElement.clientHeight
-        };
-        window.position = { x: 0, y: 0 }; // Top-left corner
-      } else {
-        // Restore original state
-        if (window.originalSize) {
-          window.size = { ...window.originalSize };
-        }
-        if (window.originalPosition) {
-          window.position = { ...window.originalPosition };
-        }
-      }
+    window.maximized = !window.maximized;
+    if (window.maximized) {
+      window.originalSize = { ...window.size };
+      window.originalPosition = { ...window.position };
+      window.size = {
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight
+      };
+      window.position = { x: 0, y: 0 };
+    } else {
+      window.size = window.originalSize || window.size;
+      window.position = window.originalPosition || window.position;
     }
     this.render();
   },
@@ -165,160 +123,193 @@ const WindowManager = {
 
   updatePosition(id, x, y) {
     const window = state.windows.find(w => w.id === id);
-    if (window && !window.maximized) {
-      window.position = { x, y };
-    }
+    if (window && !window.maximized) window.position = { x, y };
   },
 
-  updateSize(id, width, height) {
-    const window = state.windows.find(w => w.id === id);
-    if (window && !window.maximized) {
-      window.size = { width, height };
-    }
-  },
-
-  
-  // Modified createWindowElement with caching
   createWindowElement(window) {
-    this.initTemplates();
-    
-    // Clone from cached template
-    const clone = this.templateCache.window.cloneNode(true);
+    const config = WindowRegistry.get(window.type);
+    if (!config) return null;
+
+    const clone = this.templates.window.cloneNode(true);
     const windowEl = clone.querySelector('.window');
     windowEl.dataset.windowId = window.id;
-    const contentArea = windowEl.querySelector('.window__content'); // Add this line
 
-    // Add content based on window type
-    switch(window.type) {
-      case 'tarotCard':
-        contentArea.innerHTML = `
-          <h2 class="setting-panel__heading">Settings</h2>
-          <div class="setting-group">
-            <label class="setting-group__label">Card Amount:<span>4</span></label><br>
-            <input type="range" min="1" max="6" value="4" 
-            class="setting__slider" id="card-amount-slider">
-          </div>
-          <div class="setting-group">
-            <p class="setting-group__label">Selection Mode:</p>
-            <div class="radio-option">
-              <input type="radio" name="selection-mode" 
-              id="selection-mode-manual" class="radio__input">
-              <label for="selection-mode-manual" class="radio__label">Manual</label>
-            </div>
-            <div class="radio-option">
-              <input type="radio" name="selection-mode" 
-              id="selection-mode-random" class="radio__input" checked>
-              <label for="selection-mode-random" class="radio__label">Random</label>
-            </div>
-          </div>
-          <button onclick="addCard()">Get card</button>
-        `;
-      break;
+    const contentArea = windowEl.querySelector('.window__content');
+    contentArea.innerHTML = config.content();
 
-      case 'popUp':
-        contentArea.innerHTML = `
-          <label>Switcher</label>
-          <input type="range" min="0" max="1">
-        `;
-      break;      
-
-      default:
-        contentArea.textContent = `${window.type} content`;
-    }
-  
-    // Initial setup
+    windowEl.querySelector('.window__title').textContent = config.title;
     this.updateWindowElement(window, windowEl);
-    
-    // Add controls
-    this.addWindowControls(window, windowEl);
-    
+    this.setupWindowControls(window, windowEl);
+
     return windowEl;
   },
-  
-  // In updateWindowElement method
-  updateWindowElement(window, element) {
-    element.style.left = `${window.position.x}px`;
-    element.style.top = `${window.position.y}px`;
-    element.style.width = `${window.size.width}px`;
-    element.style.height = `${window.size.height}px`;
-    element.style.zIndex = window.zIndex;
-    element.style.display = window.minimized ? 'none' : 'block';
-  },
-  
-  addWindowControls(window, element) {
-    const controls = {
-      minimize: element.querySelector('.window__control--minimize'),
-      maximize: element.querySelector('.window__control--maximize'),
-      close: element.querySelector('.window__control--close'),
-      titleBar: element.querySelector('.window__title-bar')
-    };
 
-    // Event listeners for controls
-    controls.minimize.onclick = () => this.minimizeWindow(window.id);
-    controls.maximize.onclick = () => this.maximizeWindow(window.id);
-    controls.close.onclick = () => this.closeWindow(window.id);
-    
-    // Drag state variables
+  setupWindowControls(window, element) {
+  const controls = element.querySelector('.window__controls');
+  
+  // Handle control clicks
+  const handleControlClick = (e) => {
+    const control = e.target.closest('[class*="window__control--"]');
+    if (!control) return;
+
+    const action = control.className.split('--')[1];
+    if (action) {
+      e.stopPropagation();
+      e.preventDefault();
+      this[`${action}Window`](window.id);
+    }
+  };
+
+  // Prevent control interactions from triggering drag
+  controls.addEventListener('mousedown', (e) => {
+    if (e.target.closest('[class*="window__control--"]')) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  });
+
+  controls.addEventListener('touchstart', (e) => {
+    if (e.target.closest('[class*="window__control--"]')) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  });
+
+  // Click handler for desktop and mobile
+  controls.addEventListener('click', handleControlClick);
+  controls.addEventListener('touchend', handleControlClick);
+
+  // Existing drag setup
+  this.setupDraggableWindow(window, element);
+}, 
+
+  setupDraggableWindow(window, element) {
+    const titleBar = element.querySelector('.window__title-bar');
     let isDragging = false;
     let offset = { x: 0, y: 0 };
-    let mousemoveHandler, touchmoveHandler, endDragHandler;
+
+    const getViewportConstraints = () => ({
+      maxX: document.documentElement.clientWidth - window.size.width,
+      maxY: document.documentElement.clientHeight - window.size.height,
+      minX: 0,
+      minY: 0
+    });
 
     const startDrag = (clientX, clientY) => {
-      isDragging = true;
-      offset = {
-        x: clientX - window.position.x,
-        y: clientY - window.position.y
-      };
+  // Handle maximized window case
+  if (window.maximized) {
+    this.maximizeWindow(window.id); // Toggle off maximized state
+    this.render(); // Force immediate DOM update
 
-      // Define handlers
-      mousemoveHandler = (e) => {
-        if (!isDragging || window.maximized) return;
-        this.updatePosition(window.id, e.clientX - offset.x, e.clientY - offset.y);
-        this.updateWindowElement(window, element);
-      };
+    // Calculate new position to center the title bar under the mouse
+    const titleBarHeight = titleBar.offsetHeight;
+    const originalWidth = window.size.width;
+    const originalHeight = window.size.height;
 
-      touchmoveHandler = (e) => {
-        if (!isDragging || window.maximized) return;
-        const touch = e.touches[0];
-        this.updatePosition(window.id, touch.clientX - offset.x, touch.clientY - offset.y);
-        this.updateWindowElement(window, element);
-      };
+    // New coordinates to center the window under the cursor
+    const newX = clientX - originalWidth / 2;
+    const newY = clientY - titleBarHeight / 2;
 
-      endDragHandler = () => {
-        isDragging = false;
-        document.removeEventListener('mousemove', mousemoveHandler);
-        document.removeEventListener('touchmove', touchmoveHandler);
-        document.removeEventListener('mouseup', endDragHandler);
-        document.removeEventListener('touchend', endDragHandler);
-      };
+    // Apply viewport constraints
+    const constraints = {
+      maxX: document.documentElement.clientWidth - originalWidth,
+      maxY: document.documentElement.clientHeight - originalHeight,
+      minX: 0,
+      minY: 0
+    };
 
-      // Add event listeners
-      document.addEventListener('mousemove', mousemoveHandler);
-      document.addEventListener('touchmove', touchmoveHandler);
-      document.addEventListener('mouseup', endDragHandler);
-      document.addEventListener('touchend', endDragHandler);
+    window.position.x = Math.max(constraints.minX, Math.min(newX, constraints.maxX));
+    window.position.y = Math.max(constraints.minY, Math.min(newY, constraints.maxY));
+
+    // Update the element's transform and original position
+    element.style.transform = `translate(${window.position.x}px, ${window.position.y}px)`;
+    window.originalPosition = { ...window.position };
+  }
+
+  // Get actual position from element transform
+  const transform = element.style.transform.match(/translate\(([^)]+)\)/);
+  const [currentX, currentY] = transform 
+    ? transform[1].split(',').map(parseFloat)
+    : [window.position.x, window.position.y];
+
+  offset = {
+    x: clientX - currentX,
+    y: clientY - currentY
+  };
+  
+  isDragging = true;
+  this.bringToFront(window.id);
+};
+
+    const drag = (clientX, clientY) => {
+      if (!isDragging) return;
+
+      // Calculate new position with boundary constraints
+      const constraints = getViewportConstraints();
+      let newX = clientX - offset.x;
+      let newY = clientY - offset.y;
+
+      // Apply boundary constraints
+      newX = Math.max(constraints.minX, Math.min(newX, constraints.maxX));
+      newY = Math.max(constraints.minY, Math.min(newY, constraints.maxY));
+
+      // Update both state and DOM immediately
+      window.position.x = newX;
+      window.position.y = newY;
+      element.style.transform = `translate(${newX}px, ${newY}px)`;
+    };
+
+    const endDrag = () => {
+      isDragging = false;
+      // Final position update to ensure state consistency
+      this.updatePosition(window.id, window.position.x, window.position.y);
     };
 
     // Mouse events
-    controls.titleBar.onmousedown = (e) => {
-      if (e.target.closest('.window__control')) return;
+    titleBar.addEventListener('mousedown', (e) => {
       startDrag(e.clientX, e.clientY);
-      this.bringToFront(window.id);
-    };
+      document.addEventListener('mousemove', (e) => drag(e.clientX, e.clientY));
+      document.addEventListener('mouseup', endDrag);
+    });
 
     // Touch events
-    controls.titleBar.addEventListener('touchstart', (e) => {
-      if (e.target.closest('.window__control')) return;
+    titleBar.addEventListener('touchstart', (e) => {
       const touch = e.touches[0];
       startDrag(touch.clientX, touch.clientY);
-      this.bringToFront(window.id); 
-      e.preventDefault();
+      document.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        drag(touch.clientX, touch.clientY);
+      });
+      document.addEventListener('touchend', endDrag);
     });
   },
-  
-  // Optimized render method
+
+  createTaskbarItem(window) {
+    const config = WindowRegistry.get(window.type);
+    if (!config) return null;
+
+    const clone = this.templates.taskbarItem.cloneNode(true);
+    const taskbarItem = clone.querySelector('.taskbar__item');
+    taskbarItem.dataset.windowId = window.id;
+
+    const img = taskbarItem.querySelector('img');
+    img.src = config.icon;
+    img.alt = `${config.title} icon`;
+
+    taskbarItem.querySelector('.taskbar__item-label').textContent = config.title;
+    taskbarItem.addEventListener('click', () => this.toggleWindow(window.id));
+
+    return taskbarItem;
+  },
+
+  toggleWindow(id) {
+    const window = state.windows.find(w => w.id === id);
+    if (window) {
+      window.minimized ? this.minimizeWindow(id) : this.bringToFront(id);
+    }
+  },
+
   render() {
-    this.initTemplates();
     const container = document.getElementById('desktop-area');
     const taskbarContainer = document.getElementById('open-apps');
     const existingIds = new Set(state.windows.map(w => w.id));
@@ -326,7 +317,7 @@ const WindowManager = {
     // Cleanup removed windows
     this.domCache.forEach((el, id) => {
       if (!existingIds.has(id)) {
-        el.windowEl.remove();
+        el.windowEl?.remove();
         el.taskbarEl?.remove();
         this.domCache.delete(id);
       }
@@ -337,7 +328,6 @@ const WindowManager = {
       let cached = this.domCache.get(window.id);
       
       if (!cached) {
-        // Create new window
         const windowEl = this.createWindowElement(window);
         const taskbarEl = this.createTaskbarItem(window);
         
@@ -346,70 +336,37 @@ const WindowManager = {
         
         container.appendChild(windowEl);
         taskbarContainer.appendChild(taskbarEl);
-      } else {
-        // Update existing elements
-        this.updateWindowElement(window, cached.windowEl);
-        this.updateTaskbarItem(window, cached.taskbarEl);
       }
-      
-      // Sync visibility
+
+      this.updateWindowElement(window, cached.windowEl);
       cached.windowEl.style.display = window.minimized ? 'none' : 'block';
     });
   },
 
-  // Taskbar item management
-  createTaskbarItem(window) {
-    const clone = this.templateCache.taskbarItem.cloneNode(true);
-    const taskbarItem = clone.querySelector('.taskbar__item');
-    this.updateTaskbarItem(window, taskbarItem);
+  updateWindowElement(window, element) {
+    if (!element) return;
     
-    taskbarItem.onclick = () => {
-      if (window.minimized) this.minimizeWindow(window.id);
-      this.bringToFront(window.id);
-    };
-    
-    return taskbarItem;
-  },
-  
-  updateTaskbarItem(window, element) {
-    element.dataset.windowId = window.id;
-  
-    const imgEl = element.querySelector('.taskbar__item-icon');
-    const newSrc = `img/${window.type}_icon.png`;
-    if (imgEl.getAttribute('src') !== newSrc) {
-      imgEl.src = newSrc; // Only update if it's different
-    }
-
-    const labelEl = element.querySelector('.taskbar__item-label');
-    const newLabel = window.type.charAt(0).toUpperCase() + window.type.slice(1);
-    if (labelEl.textContent !== newLabel) {
-      labelEl.textContent = newLabel;
-    }
+    element.style.transform = `translate(${window.position.x}px, ${window.position.y}px)`;
+    element.style.width = `${window.size.width}px`;
+    element.style.height = `${window.size.height}px`;
+    element.style.zIndex = window.zIndex;
   }
-  
 };
 
-// ========== EVENT LISTENERS ==========
-document.querySelectorAll('[data-action]').forEach(shortcut => {
-  shortcut.addEventListener('click', (e) => {
-    const action = e.currentTarget.dataset.action;
-    WindowManager.openWindow(action);
-  });
+// ========== EVENT DELEGATION ==========
+document.getElementById('desktop-area').addEventListener('click', (e) => {
+  const target = e.target;
+  if (target.closest('.window__control')) return;
+
+  const windowEl = target.closest('.window');
+  if (windowEl) {
+    const id = parseInt(windowEl.dataset.windowId);
+    WindowManager.bringToFront(id);
+  }
 });
 
-// ========== INITIALIZATION ==========
-document.addEventListener('DOMContentLoaded', function() {
-  const el = document.getElementById('clock-display');
-  let prev = '';
-      
-  const update = () => {
-    const date = new Date();
-    const time = date.toTimeString().substring(0, 5);
-    el.textContent = time;
-        
-    const msToNextMinute = 60000 - (date.getSeconds() * 1000 + date.getMilliseconds());
-    setTimeout(update, msToNextMinute);
-  };
-      
-  update();
+document.querySelectorAll('[data-action]').forEach(shortcut => {
+  shortcut.addEventListener('click', (e) => {
+    WindowManager.openWindow(e.currentTarget.dataset.action);
+  });
 });
