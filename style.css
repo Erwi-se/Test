@@ -3,6 +3,7 @@
   --gray: #808080;
   --light-gray: #c0c0c0;
   --white: #ffffff;
+  background: #008080;
 } 
 
 html, body {
@@ -15,6 +16,8 @@ html, body {
   margin: 0;
   font-family: 'W95FA', system-ui, -apple-system, sans-serif;  
   box-sizing: border-box;
+  /* outline: 0.1px solid #f004; */ 
+  
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -22,7 +25,12 @@ html, body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  outline: 0.1px solid #f004;
+  
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  -ms-interpolation-mode: nearest-neighbor;
 }
 
 @font-face {
@@ -34,43 +42,108 @@ html, body {
   font-display: swap;
 }
 
-/* Window 95 style */
+/* Windows 95–style slider (WebKit only) */
+input[type="range"] {
+  appearance: none; /* remove default styling */
+  width: 100px;
+  height: 20px;
+  background: transparent;  
+  margin: 10px 0;
+}
 
-[class*="bdr"] {
-  padding: 2px;
-  border: 2px solid;
+/* The track */
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 10%;
+  height: 8px;  
+  background: #c0c0c0; /* typical Windows 95 gray */
+  border: 1px solid #808080;
+  box-shadow: inset 1px 1px 0 white, inset -1px -1px 0 #404040;
+}
+
+/* The thumb (slider handle) */
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none; /* remove default thumb */
+  width: 10px;
+  height: 20px;
+  background: #c0c0c0;
+  border: 1px solid #808080;
+  box-shadow: inset 1px 1px 0 white, inset -1px -1px 0 #404040;
+  margin-top: -6px;
+  cursor: pointer;
+}
+
+
+/* Windows 95–style radio button (WebKit only) */
+input[type="radio"] {
+  appearance: none; /* remove default OS styling */    
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  margin: 0 5px 0 0;
+  border: 2px solid #808080;      /* classic Windows 95 gray border */
+  background: #c0c0c0;            /* typical Windows 95 light gray background */
+  border-radius: 50%;
+  cursor: pointer;
   position: relative;
-  border-color: var(--a) var(--b) var(--b) var(--a);
 }
 
-[class*="w2"]::before {
-  content: '';
+/* Inner dot when the radio is checked */
+input[type="radio"]:checked::before {
+  content: "";
   position: absolute;
-  inset: 0;
-  border: 2px solid;
-  pointer-events: none;
-  border-color: var(--c) var(--d) var(--d) var(--c);
+  top: 2px;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  background: #000;
+  border-radius: 50%;
 }
 
-[class*="ot"] {
-  --a: var(--light-gray);
-  --b: var(--dark);
-  --c: var(--white);
-  --d: var(--gray);
+/* Add to style.css */
+.window__resizer {
+  position: absolute;
+  background: transparent;
+  z-index: 1;
 }
 
-[class*="in"],
-button:active {
-  --a: var(--gray);
-  --b: var(--white);
-  --c: var(--dark);
-  --d: var(--light-gray);
+/* Edge resizers */
+.window__resizer--left,
+.window__resizer--right {
+  width: 4px;
+  height: 100%;
+  cursor: ew-resize;
 }
 
-/* Windows 95 Style */
-.bg-teal {
-  background: #008080 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVQIW2NkQAKrVq36zwjjgzhhAAAWgghmvBCqhgAAAABJRU5ErkJggg==') repeat;
+.window__resizer--top,
+.window__resizer--bottom {
+  width: 100%;
+  height: 4px;
+  cursor: ns-resize;
 }
+
+/* Corner resizers */
+.window__resizer--top-left,
+.window__resizer--top-right,
+.window__resizer--bottom-left,
+.window__resizer--bottom-right {
+  width: 8px;
+  height: 8px;
+  cursor: nwse-resize;
+}
+
+.window__resizer--top-right { cursor: nesw-resize; }
+.window__resizer--bottom-left { cursor: nesw-resize; }
+
+/* Position resizers */
+.window__resizer--left { left: 0; }
+.window__resizer--right { right: 0; }
+.window__resizer--top { top: 0; }
+.window__resizer--bottom { bottom: 0; }
+.window__resizer--top-left { left: 0; top: 0; }
+.window__resizer--top-right { right: 0; top: 0; }
+.window__resizer--bottom-left { left: 0; bottom: 0; }
+.window__resizer--bottom-right { right: 0; bottom: 0; }
+
 
 [class*="effect-layer"] {
   position: absolute;
@@ -130,8 +203,11 @@ button:active {
 }
 
 .desktop {
-  padding: 8px;
   height: calc(100vh - 36px); /* Account for taskbar */
+}
+
+.desktop-shortcuts {
+  position: fixed;
 }
 
 /* Desktop Icons */
@@ -160,6 +236,7 @@ button:active {
   bottom: 0;
   left: 0;
   right: 0;
+  width: 100%;
   height: 36px;
   background: var(--light-gray);
   display: flex;
@@ -174,13 +251,20 @@ button:active {
   gap: 8px;
   padding: 0 8px;
   height: 100%;
+  flex: 1;
+  overflow: hidden;
 }
 
 .taskbar__item {
+  flex: 0 1 150px; /* Allows shrinking from 150px */
+  min-width: 30px; /* Minimum width before hiding */
+  max-width: 100px; /* Maximum initial width */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 8px;
+  gap: 8px;  
   height: 100%;
   background: var(--light-gray);
 }
@@ -232,7 +316,7 @@ button:active {
 }
 
 /* Window Chrome */
-.window {
+.window { 
   position: absolute;
   background: var(--light-gray);
   min-width: 200px;
@@ -282,4 +366,14 @@ button:active {
   width: 20px;
   height: 24px;
   image-rendering: pixelated;
+}
+
+.window,
+.taskbar,
+button {
+  border-image: url('img/ot_border.png') 2 / 4px / 2px;
+}
+
+button:active {
+  border-image: url('img/in_border.png') 2 / 4px;
 }
