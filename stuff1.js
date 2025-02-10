@@ -294,7 +294,6 @@ const WindowManager = {
 
     const img = taskbarItem.querySelector('img');
     img.src = config.icon;
-    img.alt = `${config.title} icon`;
 
     taskbarItem.querySelector('.taskbar__item-label').textContent = config.title;
     taskbarItem.addEventListener('click', () => this.toggleWindow(window.id));
