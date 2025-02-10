@@ -144,6 +144,30 @@ input[type="radio"]:checked::before {
 .window__resizer--bottom-left { left: 0; bottom: 0; }
 .window__resizer--bottom-right { right: 0; bottom: 0; }
 
+/* Add to style.css */
+#custom-context-menu {
+  background: var(--light-gray);
+  min-width: 120px;
+  z-index: 1000;
+  display: none;
+  position: absolute;
+}
+
+.context-menu__item {
+  padding: 4px 8px;
+  cursor: default;
+}
+
+.context-menu__item:hover {
+  background: var(--dark);
+  color: var(--white);
+}
+
+/* Disable text selection on context menu */
+.context-menu__item {
+  user-select: none;
+}
+
 
 [class*="effect-layer"] {
   position: absolute;
@@ -370,6 +394,7 @@ input[type="radio"]:checked::before {
 
 .window,
 .taskbar,
+#custom-context-menu,
 button {
   border-image: url('img/ot_border.png') 2 / 4px / 2px;
 }
