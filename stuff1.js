@@ -145,43 +145,14 @@ const WindowManager = {
   },
 
   setupWindowControls(window, element) {
-  const controls = element.querySelector('.window__controls');
-  
-  // Handle control clicks
-  const handleControlClick = (e) => {
-    const control = e.target.closest('[class*="window__control--"]');
-    if (!control) return;
+    const controls = element.querySelector('.window__controls');
+    controls.addEventListener('click', (e) => {
+      const action = e.target.closest('[class*="window__control--"]')?.className.split('--')[1];
+      if (action) this[`${action}Window`](window.id);
+    });
 
-    const action = control.className.split('--')[1];
-    if (action) {
-      e.stopPropagation();
-      e.preventDefault();
-      this[`${action}Window`](window.id);
-    }
-  };
-
-  // Prevent control interactions from triggering drag
-  controls.addEventListener('mousedown', (e) => {
-    if (e.target.closest('[class*="window__control--"]')) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  });
-
-  controls.addEventListener('touchstart', (e) => {
-    if (e.target.closest('[class*="window__control--"]')) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  });
-
-  // Click handler for desktop and mobile
-  controls.addEventListener('click', handleControlClick);
-  controls.addEventListener('touchend', handleControlClick);
-
-  // Existing drag setup
-  this.setupDraggableWindow(window, element);
-}, 
+    this.setupDraggableWindow(window, element);
+  },
 
   setupDraggableWindow(window, element) {
     const titleBar = element.querySelector('.window__title-bar');
@@ -196,50 +167,26 @@ const WindowManager = {
     });
 
     const startDrag = (clientX, clientY) => {
-  // Handle maximized window case
-  if (window.maximized) {
-    this.maximizeWindow(window.id); // Toggle off maximized state
-    this.render(); // Force immediate DOM update
+      // Handle maximized window case
+      if (window.maximized) {
+        this.maximizeWindow(window.id); // Toggle off maximized state
+        this.render(); // Force immediate DOM update
+      }
 
-    // Calculate new position to center the title bar under the mouse
-    const titleBarHeight = titleBar.offsetHeight;
-    const originalWidth = window.size.width;
-    const originalHeight = window.size.height;
+      // Get actual position from element transform
+      const transform = element.style.transform.match(/translate\(([^)]+)\)/);
+      const [currentX, currentY] = transform 
+        ? transform[1].split(',').map(parseFloat)
+        : [window.position.x, window.position.y];
 
-    // New coordinates to center the window under the cursor
-    const newX = clientX - originalWidth / 2;
-    const newY = clientY - titleBarHeight / 2;
-
-    // Apply viewport constraints
-    const constraints = {
-      maxX: document.documentElement.clientWidth - originalWidth,
-      maxY: document.documentElement.clientHeight - originalHeight,
-      minX: 0,
-      minY: 0
+      offset = {
+        x: clientX - currentX,
+        y: clientY - currentY
+      };
+      
+      isDragging = true;
+      this.bringToFront(window.id);
     };
-
-    window.position.x = Math.max(constraints.minX, Math.min(newX, constraints.maxX));
-    window.position.y = Math.max(constraints.minY, Math.min(newY, constraints.maxY));
-
-    // Update the element's transform and original position
-    element.style.transform = `translate(${window.position.x}px, ${window.position.y}px)`;
-    window.originalPosition = { ...window.position };
-  }
-
-  // Get actual position from element transform
-  const transform = element.style.transform.match(/translate\(([^)]+)\)/);
-  const [currentX, currentY] = transform 
-    ? transform[1].split(',').map(parseFloat)
-    : [window.position.x, window.position.y];
-
-  offset = {
-    x: clientX - currentX,
-    y: clientY - currentY
-  };
-  
-  isDragging = true;
-  this.bringToFront(window.id);
-};
 
     const drag = (clientX, clientY) => {
       if (!isDragging) return;
@@ -294,6 +241,7 @@ const WindowManager = {
 
     const img = taskbarItem.querySelector('img');
     img.src = config.icon;
+    img.alt = `${config.title} icon`;
 
     taskbarItem.querySelector('.taskbar__item-label').textContent = config.title;
     taskbarItem.addEventListener('click', () => this.toggleWindow(window.id));
@@ -339,6 +287,7 @@ const WindowManager = {
 
       this.updateWindowElement(window, cached.windowEl);
       cached.windowEl.style.display = window.minimized ? 'none' : 'block';
+      cached.taskbarEl.classList.toggle('minimized', window.minimized);
     });
   },
 
@@ -369,3 +318,60 @@ document.querySelectorAll('[data-action]').forEach(shortcut => {
     WindowManager.openWindow(e.currentTarget.dataset.action);
   });
 });
+
+// Add to stuff1.js
+// Remove default context menu
+document.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+});
+
+// Create custom context menu
+const contextMenu = document.getElementById('custom-context-menu');
+
+document.addEventListener('contextmenu', (e) => {
+  // Clear previous items
+  contextMenu.innerHTML = '';
+  
+  // Determine clicked element type
+  const isDesktop = e.target.closest('#desktop-area');
+  const isWindow = e.target.closest('.window');
+  const isTaskbar = e.target.closest('.taskbar');
+
+  // Generate menu items based on context
+  if (isDesktop) {
+    addMenuItem('New Folder');
+    addMenuItem('Refresh');
+    addMenuItem('Properties');
+  } else if (isWindow) {
+    addMenuItem('Close');
+    addMenuItem('Minimize');
+    addMenuItem('Maximize');
+  } else if (isTaskbar) {
+    addMenuItem('Task Manager');
+    addMenuItem('Properties');
+  } else {
+    addMenuItem('About');
+  }
+
+  // Position and show menu
+  const x = Math.min(e.clientX, window.innerWidth - contextMenu.offsetWidth);
+  const y = Math.min(e.clientY, window.innerHeight - contextMenu.offsetHeight);
+  
+  contextMenu.style.left = `${x}px`;
+  contextMenu.style.top = `${y}px`;
+  contextMenu.style.display = 'block';
+});
+
+// Close menu on any click
+document.addEventListener('click', (e) => {
+  if (!contextMenu.contains(e.target)) {
+    contextMenu.style.display = 'none';
+  }
+});
+
+function addMenuItem(text) {
+  const item = document.createElement('div');
+  item.className = 'context-menu__item';
+  item.textContent = text;
+  contextMenu.appendChild(item);
+}
